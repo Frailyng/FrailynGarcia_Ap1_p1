@@ -9,7 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
-builder.Services.AddDbContext<Contexto>( options => options.UseSqlite(ConStr));    
+builder.Services.AddDbContext<Contexto>( options => options.UseSqlite(ConStr));
 
 var app = builder.Build();
 
