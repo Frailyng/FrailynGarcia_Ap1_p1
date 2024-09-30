@@ -1,0 +1,92 @@
+﻿using FrailynGarcia_Ap1_p1.DAL;
+using FrailynGarcia_Ap1_p1.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace FrailynGarcia_Ap1_p1.Services;
+
+public class PrestamoService
+{
+    private readonly Contexto _context;
+
+    public PrestamoService(Contexto contexto)
+    {
+        _context = contexto;
+    }
+
+    //Guardar
+    public async Task<bool> Guardar(Prestamos prestamo)
+    {
+        if (!await Existe(prestamo.PrestamosId))
+            return await Insertar(prestamo);
+        else
+            return await Modificar(prestamo);
+    }
+
+    //Insertar
+    public async Task<bool> Insertar(Prestamos prestamo)
+    {
+        _context.Prestamos.Add(prestamo);
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    //Modificar
+    public async Task<bool> Modificar(Prestamos prestamo)
+    {
+        _context.Prestamos.Update(prestamo);
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    //Existe 
+    public async Task<bool> Existe(int id)
+    {
+        return await _context.Prestamos
+            .AnyAsync(p => p.PrestamosId == id);
+    }
+
+    //Existe 2
+    public async Task<bool> Existe(string deudores, int? id = null)
+    {
+        return await _context.Prestamos
+            .AnyAsync(p => p.Deudores.Equals(deudores));
+    }
+
+    //Existe 3
+    public async Task<bool> Existe(int id, string deudores)
+    {
+        return await _context.Prestamos
+            .AnyAsync(P => P.PrestamosId != id && P.Deudores.Equals(deudores));
+    }
+
+    //Eliminar
+    public async Task<bool> Eliminar(int id)
+    {
+        var prestamos = await _context.Prestamos
+            .Where(p => p.PrestamosId == id)
+            .ExecuteDeleteAsync();
+        return prestamos > 0;
+    }
+
+    //Buscar
+    public async Task<Prestamos?> Buscar(int id)
+    {
+        return await _context.Prestamos
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.PrestamosId == id);
+    }
+
+    //Listar
+   /* public async Task<List<Prestamos>> Listar(Expression <Func<Prestamos>> criterio)
+    {
+        return await _context.Prestamos
+            .AsNoTracking()
+            .Where(criterio)
+            .ToListAsync();
+    }*/
+    
+
+    
+
+
+
+}
