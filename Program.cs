@@ -1,5 +1,6 @@
 using FrailynGarcia_Ap1_p1.Components;
 using FrailynGarcia_Ap1_p1.DAL;
+using FrailynGarcia_Ap1_p1.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddRazorComponents()
 
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContext<Contexto>( options => options.UseSqlite(ConStr));
+
+builder.Services.AddScoped<PrestamoService>();
 
 var app = builder.Build();
 
