@@ -23,7 +23,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Registros", x => x.PrestamosId);
+                    table.PrimaryKey("PK_Prestamos", x => x.PrestamosId);
                 });
         }
 
