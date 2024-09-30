@@ -11,16 +11,19 @@ namespace FrailynGarcia_Ap1_p1.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Registros",
+                name: "Prestamos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    PrestamosId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Nombre = table.Column<string>(type: "TEXT", nullable: false)
+                    Deudores = table.Column<string>(type: "TEXT", nullable: false),
+                    Conceptos = table.Column<string>(type: "TEXT", nullable: false),
+                    Montos = table.Column<int>(type: "INTEGER", nullable: false)
+
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Registros", x => x.Id);
+                    table.PrimaryKey("PK_Registros", x => x.PrestamosId);
                 });
         }
 
@@ -28,7 +31,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Registros");
+                name: "Prestamos");
         }
     }
 }
