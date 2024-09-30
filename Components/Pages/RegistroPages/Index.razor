@@ -54,5 +54,33 @@
 
 
 @code {
+   /* public Prestamos Prestamo = new Prestamos();
+    //public <List<Registros>> ListaPrestamos = new <List<Registros>>();
+    private string Filtro = "prestamoid";
+    private string valorFiltro = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        //ListaRegistros = await RegistroService.Listar(p => true);
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await PrestamoService.Guardar(Prestamo);
+    }
+
+    public async Task Buscar()
+    {
+        if (valorFiltro != null)
+        {
+            if (Filtro == "prestamoid" && int.TryParse(valorFiltro, out int Prestamoid))
+            {
+                //ListaPrestamos = await RegistroService.Listar(p => p.PrestamosId == prestamoid);            
+            }
+            else if (Filtro == "deudores")
+            {
+                //ListaPrestamos = await RegistroService.Listar(p => p.Deudores == valorFiltro);
+            }
+        }
+    }*/
 }
