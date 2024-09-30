@@ -21,15 +21,15 @@ namespace FrailynGarcia_Ap1_p1.Migrations
 
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Registros", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Deudor")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("Concepto")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("Deudor");
 
                     b.ToTable("Registros");
                 });

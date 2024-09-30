@@ -10,6 +10,6 @@ namespace FrailynGarcia_Ap1_p1.DAL
         {
         }
 
-        public DbSet<Registros> Registros { get; set; }
+        public DbSet<Prestamos> Registros { get; set; }
     }
 }
