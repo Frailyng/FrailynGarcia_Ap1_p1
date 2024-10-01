@@ -1,4 +1,5 @@
 ﻿@page "/Prestamo/Index"
+@inject PrestamoService PrestamoService
 @rendermode InteractiveServer
 @inject NavigationManager navigation
 
@@ -6,62 +7,89 @@
 <div class="Container">
     <div class="card shadow-lg">
         <div class="card-header">
-            <h5 class="card-title">Registro</h5>
+            <h5 class="card-title">Prestamo</h5>
         </div>
         
         <div class="card-body">
-
-            <a href="#"
-            class="btn btn-primary">
-            <span class="bi bi-plus-square mt-3"></span> Crear
-        </a>
-
-        <table class="table table-light table-bordered">
-            <thead class="table table-striped text-center text-white">
-                <tr>
-                </tr>
-            </thead>
-            <tbody>
-                    <a href="#"
-                       class="btn btn-primary">
-                        <span class="bi bi-plus-square mt-3"></span> Crear
+ <!-- Filtros de búsqueda y botón crear -->
+ <div class="mb-3 row align-items-end">
+     <div class="col-md-3">
+         <label for="filtrarPor" class="form-label">Filtrar por:</label>
+         <select id="filtrarPor" class="form-select form-select-sm" @bind="Filtro">
+             <option value="prestamoid">PrestamoId</option>
+             <option value="deudores">Deudores</option>
+             <option value="conceptos">Conceptos</option>
+             <option value="conceptos">Montos</option>
+         </select>
+     </div>
+     <div class="col-md-4">
+         <label for="valorFiltro" class="form-label">Buscar:</label>
+         <input type="text" id="valorFiltro" class="form-control form-control-sm" placeholder="Buscar..." @bind="valorFiltro">
+     </div>
+     <div class="col-md-3">
+         <button class="btn btn-outline-primary btn-sm" type="button" @onclick="Buscar">
+             <span class="bi bi-search"></span> Buscar
+         </button>
+     </div>
+     <div class="col-md-2 text-end">
+                    <!-- Botón Crear que lleva a /Prestamo/Create -->
+                    <a href="/Prestamo/Create" class="btn btn-success btn-sm">
+                        <span class="bi bi-plus-square"></span> Crear
                     </a>
-                <td class="text-center">
-                    <a href="#" class="btn bi bi-eye"></a>
-                </td>
-                <td class="text-center">
-                    <a href="#" class="btn bi bi-pencil-square"></a>
-                </td>
-                <td class="text-center">
-                    <a href="#" class="btn bi bi-trash"></a>
-                </td>
-
-                <a href="#"
-                   class="btn btn-primary">
-                    <span class="bi bi-floppy mt-3"></span> Guardar
-                </a>
-                <a href="#"
-                   class="btn btn-primary">
-                    <span class="bi bi-arrow-left mt-3"></span> Volver
-                </a>
-            </tbody>
-        </table>
+                </div>
+            </div>
+            <!-- Tabla -->
+            <table class="table table-light table-bordered">
+                <thead class="table table-striped text-center text-white bg-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Deudores</th>
+                        <th>Conceptos</th>
+                        <th>Monto</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ListaPrestamos.Any())
+                    {
+                        foreach (var registro in ListaPrestamos)
+                        {
+                            <tr>
+                                <td class="text-center">@registro.PrestamosId</td>
+                                <td class="text-center">@registro.Deudores</td>
+                                <td class="text-center">
+                                    <a href="/Prestamo/Edit/@registro.PrestamosId" class="btn bi bi-pencil-square"></a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/Prestamo/Delete/@registro.PrestamosId" class="btn bi bi-trash"></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center">No hay Prestamos disponibles</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    
     </div>
-        
 </div>
 
 
 @code {
-   /* public Prestamos Prestamo = new Prestamos();
-    //public <List<Registros>> ListaPrestamos = new <List<Registros>>();
+    public Prestamos Prestamo = new Prestamos();
+    public List<Prestamos> ListaPrestamos = new List<Prestamos>();
+
     private string Filtro = "prestamoid";
     private string valorFiltro = "";
 
     protected override async Task OnInitializedAsync()
     {
-        //ListaRegistros = await RegistroService.Listar(p => true);
+        ListaPrestamos = await PrestamoService.Listar(p => true);
     }
 
     public async Task Guardar()
@@ -73,14 +101,18 @@
     {
         if (valorFiltro != null)
         {
-            if (Filtro == "prestamoid" && int.TryParse(valorFiltro, out int Prestamoid))
+            if (Filtro == "prestamoid" && int.TryParse(valorFiltro, out int prestamoid))
             {
-                //ListaPrestamos = await RegistroService.Listar(p => p.PrestamosId == prestamoid);            
+                ListaPrestamos = await PrestamoService.Listar(p => p.PrestamosId == prestamoid);            
             }
             else if (Filtro == "deudores")
             {
-                //ListaPrestamos = await RegistroService.Listar(p => p.Deudores == valorFiltro);
+                ListaPrestamos = await PrestamoService.Listar(p => p.Deudores == valorFiltro);
+            }
+            else if (Filtro == "conceptos")
+            {
+                ListaPrestamos = await PrestamoService.Listar(p => p.Conceptos == valorFiltro);
             }
         }
-    }*/
+    }
 }
