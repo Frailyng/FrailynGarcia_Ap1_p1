@@ -1,5 +1,30 @@
-﻿<h3>Delete</h3>
+﻿@page "/Prestamo/Edit"
+@page "/Prestamo/Edit/{Id : int}"
+@inject PrestamoService PrestamoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
 
 @code {
+    public int? Id { get; set; }
+    public Prestamos Prestamo { get; set; } = new Prestamos();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            Prestamo.PrestamosId = Id.Value;
+        }
+    }
+
+    public async Task EliminarPrestamo()
+    {
+        if (Id != 0 || Prestamo != null)
+        {
+            if (await PrestamoService.Eliminar(Prestamo.PrestamosId))
+            {
+                navigationManager.NavigateTo("/Prestamo/Index");
+            }
+        }
+    }
 
 }
