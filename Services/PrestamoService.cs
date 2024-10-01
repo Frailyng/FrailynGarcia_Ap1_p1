@@ -39,7 +39,7 @@ public class PrestamoService
     }
 
     //Existe
-    public async Task<bool> Existe(int? prestamoid)
+    public async Task<bool> Existe(int prestamoid)
     {
         return await _context.Prestamos
             .AnyAsync(r => r.PrestamosId == prestamoid);
@@ -53,7 +53,7 @@ public class PrestamoService
     }
 
     //Existe 3
-    public async Task<bool> Existe(int? prestamoid, string deudores)
+    public async Task<bool> Existe(int prestamoid, string deudores)
     {
         return await _context.Prestamos
             .AnyAsync(r => r.PrestamosId != prestamoid && r.Deudores.Equals(deudores));
