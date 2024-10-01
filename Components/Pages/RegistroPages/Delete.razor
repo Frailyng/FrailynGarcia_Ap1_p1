@@ -64,14 +64,14 @@ else
 
 @code {
     [Parameter]
-    public int? Id { get; set; }
+    public int Id { get; set; }
     public Prestamos Prestamo { get; set; } = new Prestamos();
 
     protected override async Task OnInitializedAsync()
     {
-        if (Id.HasValue)
+        if (Id != 0
         {
-            Prestamo.PrestamosId = Id.Value;
+            Prestamo = await PrestamoService.Buscar(Id);
         }
     }
 

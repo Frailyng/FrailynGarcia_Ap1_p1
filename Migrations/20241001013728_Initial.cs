@@ -19,7 +19,6 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     Deudores = table.Column<string>(type: "TEXT", nullable: false),
                     Conceptos = table.Column<string>(type: "TEXT", nullable: false),
                     Montos = table.Column<string>(type: "TEXT", nullable: false)
-
                 },
                 constraints: table =>
                 {

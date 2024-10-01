@@ -16,19 +16,27 @@ namespace FrailynGarcia_Ap1_p1.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
-            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Registros", b =>
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Prestamos", b =>
                 {
-                    b.Property<int>("Deudor")
+                    b.Property<int>("PrestamosId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Concepto")
+                    b.Property<string>("Conceptos")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Deudor");
+                    b.Property<string>("Deudores")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("Registros");
+                    b.Property<string>("Montos")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PrestamosId");
+
+                    b.ToTable("Prestamos");
                 });
 #pragma warning restore 612, 618
         }
