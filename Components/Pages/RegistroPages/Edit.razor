@@ -17,7 +17,7 @@
             <div class="row">
 
                 <div class="col-md-6 mb-3">
-                    <label for="Id" class="form-label">Id:</label>
+                    <label for="Id" class="form-label">PrestamoId:</label>
                     <div class="input-group">
                         <div style="width: 40%; height: 1em;">
                             <InputNumber @bind-Value="Prestamo.PrestamosId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
@@ -27,21 +27,20 @@
             </div>
 
             <div class="mb-3">
-                <label for="Deudores" class="form-label">Nombre:</label>
+                <label for="Deudores" class="form-label">Deudores:</label>
                 <InputText @bind-Value="Prestamo.Deudores" class="form-control" />
                 <ValidationMessage For="@(() => Prestamo.Deudores)" />
             </div>
 
             <div class="mb-3">
-                <label for="Conceptos" class="form-label">Nombre:</label>
+                <label for="Conceptos" class="form-label">Deudores:</label>
                 <InputText @bind-Value="Prestamo.Conceptos" class="form-control" />
                 <ValidationMessage For="@(() => Prestamo.Conceptos)" />
             </div>
 
             <div class="mb-3">
-                <label for="Nombre" class="form-label">Nombre:</label>
+                <label for="Montos" class="form-label">Deudores:</label>
                 <InputNumber @bind-Value="Prestamo.Montos" class="form-control" />
-                <ValidationMessage For="@(() => Prestamo.Montos)" />
             </div>
         </div>
 
