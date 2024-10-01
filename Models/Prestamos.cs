@@ -9,6 +9,6 @@ namespace FrailynGarcia_Ap1_p1.Models
         [Required(ErrorMessage ="El campo Deudores no puede estar en blanco")]
         public string Deudores { get; set; }
         public string Conceptos { get; set; }
-        public int Montos { get; set; }
+        public string Montos { get; set; }
     }
 }

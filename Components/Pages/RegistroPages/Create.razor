@@ -37,10 +37,10 @@
                 <ValidationMessage For="@(() => Prestamo.Conceptos)" />
             </div>
 
-            @* Montos *@
+            @* Conceptos *@
             <div class="mb-3">
                 <label for="Montos" class="form-label">Montos:</label>
-                <InputNumber @bind-Value="Prestamo.Montos" class="form-control" />
+                <InputText @bind-Value="Prestamo.Montos" class="form-control" />
                 <ValidationMessage For="@(() => Prestamo.Montos)" />
             </div>
 
