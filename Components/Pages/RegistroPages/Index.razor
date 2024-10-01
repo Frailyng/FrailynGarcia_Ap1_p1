@@ -1,7 +1,7 @@
 ﻿@page "/Prestamo/Index"
 @inject PrestamoService PrestamoService
 @rendermode InteractiveServer
-@inject NavigationManager navigation
+@inject NavigationManager navigationMaganer
 
 <PageTitle></PageTitle>
 <div class="Container">
@@ -19,7 +19,7 @@
              <option value="prestamoid">PrestamoId</option>
              <option value="deudores">Deudores</option>
              <option value="conceptos">Conceptos</option>
-             <option value="conceptos">Montos</option>
+             <option value="montos">Montos</option>
          </select>
      </div>
      <div class="col-md-4">
@@ -45,7 +45,7 @@
                         <th>ID</th>
                         <th>Deudores</th>
                         <th>Conceptos</th>
-                        <th>Monto</th>
+                        <th>Montos</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
@@ -114,6 +114,10 @@
             else if (Filtro == "conceptos")
             {
                 ListaPrestamos = await PrestamoService.Listar(p => p.Conceptos == valorFiltro);
+            }
+            else
+            {
+                ListaPrestamos = await PrestamoService.Listar(p => true);
             }
         }
     }
