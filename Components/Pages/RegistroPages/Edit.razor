@@ -1,0 +1,31 @@
+﻿@page "/Prestamo/Edit/{Id : int}"
+@inject PrestamoService PrestamoService
+@rendermode InteractiveServer
+
+
+@code {
+    public int Id { get; set; }
+    public Prestamos? Prestamo { get; set; } = new Prestamos();
+    private bool Existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            Prestamo = await PrestamoService.Buscar(Id);
+            await Buscar();
+        }
+    }
+
+    public void Nuevo()
+    {
+        Prestamo = new Prestamos();
+        Existe = false;
+    }
+
+    public async Task Buscar()
+    {
+        var PrestamoEncontrado = await PrestamoService.Buscar(Id);
+        if (PrestamoEncontrado)
+    }
+    }
