@@ -18,7 +18,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Deudores = table.Column<string>(type: "TEXT", nullable: false),
                     Conceptos = table.Column<string>(type: "TEXT", nullable: false),
-                    Montos = table.Column<int>(type: "INTEGER", nullable: true)
+                    Montos = table.Column<string>(type: "TEXT", nullable: false)
 
                 },
                 constraints: table =>
