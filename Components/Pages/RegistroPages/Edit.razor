@@ -1,4 +1,4 @@
-﻿@page "/Prestamo/Edit/{Id : int}"
+﻿@page "/Prestamo/Edit/{Id:int}"
 @inject PrestamoService PrestamoService
 @rendermode InteractiveServer
 
@@ -58,15 +58,15 @@
 
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public Prestamos Prestamo { get; set; } = new Prestamos();
     private bool Existe = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (Id != 0)
+        if (Id.HasValue)
         {
-
+            Prestamo.PrestamosId = Id.Value;
             await Buscar();
         }
     }
@@ -79,7 +79,7 @@
 
     public async Task Buscar()
     {
-        var PrestamoEncontrado = await PrestamoService.Buscar(Id);
+        var PrestamoEncontrado = await PrestamoService.Buscar(Prestamo.PrestamosId);
         if (PrestamoEncontrado != null)
         {
             Prestamo = PrestamoEncontrado;
@@ -108,5 +108,6 @@
     public async Task Eliminar()
     {
         var eliminado = await PrestamoService.Eliminar(Prestamo.PrestamosId);
+        Nuevo();
     }
     }
