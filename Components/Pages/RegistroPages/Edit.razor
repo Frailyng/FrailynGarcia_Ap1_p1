@@ -3,16 +3,57 @@
 @rendermode InteractiveServer
 
 
+
+<EditForm Model="Prestamo" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+        <div class="card-header bg-primary text-white" style="text-align: center;">
+            <h3> <i class="fas fa-clipboard-list"></i> Editar Prestamos</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label for="Id" class="form-label">Id:</label>
+                    <div class="input-group">
+                        <div style="width: 40%; height: 1em;">
+                            <InputNumber @bind-Value="Prestamo.PrestamosId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="Nombre" class="form-label">Nombre:</label>
+                <InputText @bind-Value="Registro.Nombre" class="form-control" />
+                <ValidationMessage For="@(() => Prestamo.Deudores)" />
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-floppy mt-3"></span> Guardar </button>
+                <a type="button" href="/Prestamo/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
 @code {
     public int Id { get; set; }
-    public Prestamos? Prestamo { get; set; } = new Prestamos();
+    public Prestamos Prestamo { get; set; } = new Prestamos();
     private bool Existe = false;
 
     protected override async Task OnInitializedAsync()
     {
         if (Id != 0)
         {
-            Prestamo = await PrestamoService.Buscar(Id);
             await Buscar();
         }
     }
@@ -26,6 +67,28 @@
     public async Task Buscar()
     {
         var PrestamoEncontrado = await PrestamoService.Buscar(Id);
-        if (PrestamoEncontrado)
+        if (PrestamoEncontrado != null)
+        {
+            Prestamo = PrestamoEncontrado;
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        Existe = await PrestamoService.Existe(Prestamo.Deudores);
+        return !Existe;
+    }
+
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            return;
+        }
+        var guardo = await PrestamoService.Guardar(Prestamo);
+        if(guardo)
+        {
+            Nuevo();
+        }
     }
     }
