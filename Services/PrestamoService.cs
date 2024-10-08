@@ -18,6 +18,7 @@ public class PrestamoService
     //Guardar
     public async Task<bool> Guardar(Prestamos prestamo)
     {
+        prestamo.Balance = prestamo.Montos;
         if (!await Existe(prestamo.PrestamosId))
             return await Insertar(prestamo);
         else
@@ -53,10 +54,10 @@ public class PrestamoService
     }
 
     //Existe 3
-    public async Task<bool> Existe(int prestamoid, string deudores)
+    public async Task<bool> Existe(int prestamoid, string Deudores)
     {
         return await _context.Prestamos
-            .AnyAsync(r => r.PrestamosId != prestamoid && r.Deudores.Equals(deudores));
+            .AnyAsync(r => r.PrestamosId != prestamoid && r.Deudores.Equals(Deudores));
     }
 
     //Eliminar

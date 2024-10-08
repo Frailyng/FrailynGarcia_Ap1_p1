@@ -9,7 +9,22 @@ namespace FrailynGarcia_Ap1_p1.DAL
         public Contexto(DbContextOptions<Contexto> options) : base(options)
         {
         }
-
         public DbSet<Prestamos> Prestamos { get; set; }
+
+        public DbSet<Deudores> Deudores { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Deudores>().HasData(new List<Deudores>()
+            {
+                new Deudores(){DeudorId = 1, Nombres = "Frailyn" },
+                new Deudores(){DeudorId = 2, Nombres = "Celainy"},
+                new Deudores(){DeudorId = 3, Nombres = "Abel"}
+
+                });
+        }
+
+
     }
 }

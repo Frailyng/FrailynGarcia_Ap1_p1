@@ -103,7 +103,7 @@
         {
             if (Filtro == "prestamoid" && int.TryParse(valorFiltro, out int prestamoid))
             {
-                ListaPrestamos = await PrestamoService.Listar(p => p.PrestamosId == prestamoid);            
+                ListaPrestamos = await PrestamoService.Listar(p => p.PrestamosId == prestamoid);
             }
             else if (Filtro == "deudores")
             {
@@ -117,6 +117,8 @@
             {
                 ListaPrestamos = await PrestamoService.Listar(p => true);
             }
+            
         }
+       
     }
 }

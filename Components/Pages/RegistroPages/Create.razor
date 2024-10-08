@@ -1,5 +1,6 @@
 ﻿@page "/Prestamo/Create"
 @inject PrestamoService PrestamoService
+@inject DeudorService DeudorService
 @rendermode InteractiveServer
 
 <EditForm Model="Prestamo" OnValidSubmit="Guardar">
@@ -23,11 +24,17 @@
                 </div>
             </div>
 
-            @* Deudores *@
+            <!-- Deudor (Cargar desde Deudores) -->
             <div class="mb-3">
-                <label for="Deudores" class="form-label">Deudores:</label>
-                <InputText @bind-Value="Prestamo.Deudores" class="form-control" />
-                <ValidationMessage For="@(() => Prestamo.Deudores)" />
+                <label for="Nombres" class="form-label">Nombres:</label>
+                <InputSelect @bind-Value="Prestamo.Deudores" class="form-control">
+                    <option value="">Seleccione un Deudor</option>
+                    @foreach (var Deudor in ListaDeudores)
+                    {
+                        <option value="@Deudor.Nombres">@Deudor.Nombres</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => Deudor.Nombres)" />
             </div>
 
             @* Conceptos *@
@@ -40,7 +47,7 @@
             @* Montos *@
             <div class="mb-3">
                 <label for="Montos" class="form-label">Montos:</label>
-                <InputText @bind-Value="Prestamo.Montos" class="form-control" />
+                <InputNumber @bind-Value="Prestamo.Montos" class="form-control" />
                 <ValidationMessage For="@(() => Prestamo.Montos)" />
             </div>
 
@@ -59,7 +66,14 @@
 @code {
     public int Id { get; set; }
     public Prestamos Prestamo { get; set; } = new Prestamos();
+    public Deudores Deudor { get; set; } = new Deudores();
+    public List<Deudores> ListaDeudores { get; set; } = new List<Deudores>();
     private bool Existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaDeudores = await DeudorService.ObtenerEntidadesAsync();
+    }
 
     public void Nuevo()
     {

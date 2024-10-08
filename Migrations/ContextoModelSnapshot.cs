@@ -16,10 +16,45 @@ namespace FrailynGarcia_Ap1_p1.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Deudores", b =>
+                {
+                    b.Property<int>("DeudorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("DeudorId");
+
+                    b.ToTable("Deudores");
+
+                    b.HasData(
+                        new
+                        {
+                            DeudorId = 1,
+                            Nombres = "Frailyn"
+                        },
+                        new
+                        {
+                            DeudorId = 2,
+                            Nombres = "Celainy"
+                        },
+                        new
+                        {
+                            DeudorId = 3,
+                            Nombres = "Abel"
+                        });
+                });
+
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Prestamos", b =>
                 {
                     b.Property<int>("PrestamosId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Balance")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Conceptos")
@@ -30,9 +65,8 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Montos")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Montos")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PrestamosId");
 
