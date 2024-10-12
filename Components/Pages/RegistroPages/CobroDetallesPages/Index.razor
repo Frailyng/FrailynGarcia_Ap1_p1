@@ -1,5 +1,125 @@
-﻿<h3>Index</h3>
+﻿@page "/CobroDetalle/Index"
+@inject CobroDetalleService CobroDetalleService
+@rendermode InteractiveServer
+
+<PageTitle></PageTitle>
+<div class="Container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h5 class="card-title">Detalles de Cobros</h5>
+        </div>
+
+        <div class="card-body">
+            <!-- Filtros de búsqueda y botón crear -->
+            <div class="mb-3 row align-items-end">
+                <div class="col-md-3">
+                    <label for="filtrarPor" class="form-label">Filtrar por:</label>
+                    <select id="filtrarPor" class="form-select form-select-sm" @bind="Filtro">
+                        <option value="detalleid">DetalleId</option>
+                        <option value="cobroid">CobroId</option>
+                        <option value="prestamoid">PrestamoId</option>
+                        <option value="valor">Valor Cobrado</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="valorFiltro" class="form-label">Buscar:</label>
+                    <input type="text" id="valorFiltro" class="form-control form-control-sm" placeholder="Buscar..." @bind="valorFiltro">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-primary btn-sm" type="button" @onclick="Buscar">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                </div>
+                <div class="col-md-2 text-end">
+                    <!-- Botón Crear que lleva a /CobroDetalle/Create -->
+                    <a href="/CobroDetalle/Create" class="btn btn-success btn-sm">
+                        <span class="bi bi-plus-square"></span> Crear
+                    </a>
+                </div>
+            </div>
+            <!-- Tabla -->
+            <table class="table table-light table-bordered">
+                <thead class="table table-striped text-center text-white bg-primary">
+                    <tr>
+                        <th>DetalleID</th>
+                        <th>CobroID</th>
+                        <th>PrestamoID</th>
+                        <th>Valor Cobrado</th>
+                        <th>Ver</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ListaCobrosDetalles.Any())
+                    {
+                        foreach (var detalle in ListaCobrosDetalles)
+                        {
+                            <tr>
+                                <td class="text-center">@detalle.DetalleId</td>
+                                <td class="text-center">@detalle.CobroId</td>
+                                <td class="text-center">@detalle.PrestamoId</td>
+                                <td class="text-center">@detalle.ValorCobrado</td>
+                                <td class="text-center">
+                                    <a href="/CobroDetalle/Details/@detalle.DetalleId" class="btn bi bi-eye"></a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/CobroDetalle/Edit/@detalle.DetalleId" class="btn bi bi-pencil-square"></a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/CobroDetalle/Delete/@detalle.DetalleId" class="btn bi bi-trash"></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">No hay Detalles de Cobros disponibles</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @code {
+    public CobroDetalle CobroDetalle = new CobroDetalle();
+    public List<CobroDetalle> ListaCobrosDetalles = new List<CobroDetalle>();
 
+    private string Filtro = "detalleid";
+    private string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaCobrosDetalles = await CobroDetalleService.Listar(p => true);
+    }
+
+    public async Task Buscar()
+    {
+        if (valorFiltro.Trim() != "")
+        {
+            if (Filtro == "detalleid" && int.TryParse(valorFiltro, out int detalleId))
+            {
+                ListaCobrosDetalles = await CobroDetalleService.Listar(p => p.DetalleId == detalleId);
+            }
+            else if (Filtro == "cobroid" && int.TryParse(valorFiltro, out int cobroId))
+            {
+                ListaCobrosDetalles = await CobroDetalleService.Listar(p => p.CobroId == cobroId);
+            }
+            else if (Filtro == "prestamoid" && int.TryParse(valorFiltro, out int prestamoId))
+            {
+                ListaCobrosDetalles = await CobroDetalleService.Listar(p => p.PrestamoId == prestamoId);
+            }
+            else if (Filtro == "valor" && int.TryParse(valorFiltro, out int valor))
+            {
+                ListaCobrosDetalles = await CobroDetalleService.Listar(p => p.ValorCobrado == valor);
+            }
+        }
+        else
+        {
+            ListaCobrosDetalles = await CobroDetalleService.Listar(p => true);
+        }
+    }
 }
