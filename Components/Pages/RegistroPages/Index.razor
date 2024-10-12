@@ -99,7 +99,7 @@
 
     public async Task Buscar()
     {
-        if (valorFiltro != null)
+        if (valorFiltro.Trim() != "")
         {
             if (Filtro == "prestamoid" && int.TryParse(valorFiltro, out int prestamoid))
             {
@@ -112,12 +112,11 @@
             else if (Filtro == "conceptos")
             {
                 ListaPrestamos = await PrestamoService.Listar(p => p.Conceptos == valorFiltro);
-            }
-            else
-            {
-                ListaPrestamos = await PrestamoService.Listar(p => true);
-            }
-            
+            }            
+        }
+        else
+        {
+            ListaPrestamos = await PrestamoService.Listar(p => true);
         }
        
     }
