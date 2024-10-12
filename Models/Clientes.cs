@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FrailynGarcia_Ap1_p1.Models;
 
@@ -18,5 +19,8 @@ public class Clientes
     public string Direccion { get; set; }
 
     public int LimiteCredito { get; set; }
+
+    [ForeignKey("ClienteId")]
+    public ICollection<ClientesDetalle> ClientesDetalle { get; set; } = new List<ClientesDetalle>();
 
 }
