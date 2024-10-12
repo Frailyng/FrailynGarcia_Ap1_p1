@@ -1,29 +1,71 @@
 ﻿using FrailynGarcia_Ap1_p1.DAL;
 using FrailynGarcia_Ap1_p1.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
-namespace FrailynGarcia_Ap1_p1.Services;
-
-public class ClienteService
+namespace FrailynGarcia_Ap1_p1.Services
 {
-    private readonly Contexto _context;
-
-    public ClienteService (Contexto contexto)
+    public class ClienteService
     {
-        _context = contexto;
-    }
+        private readonly Contexto _context;
 
-    [HttpPost]
+        public ClienteService(Contexto contexto)
+        {
+            _context = contexto;
+        }
 
-    public async Task<ActionResult<Clientes>> PostCliente(Clientes cliente)
-    {
-        if (!ClientesExists(cliente.ClienteId))
+        public async Task<bool> Guardar(Clientes cliente)
+        {
+            if (!await Existe(cliente.ClienteId))
+                return await Insertar(cliente);
+            else
+                return await Modificar(cliente);
+        }
+
+        public async Task<bool> Insertar(Clientes cliente)
+        {
             _context.Clientes.Add(cliente);
-        else
-            _context.Clientes.Update(cliente);
-        await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync() > 0;
+        }
 
-        return Ok(cliente);
+        public async Task<bool> Modificar(Clientes cliente)
+        {
+            _context.Clientes.Update(cliente);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        // Verificar si existe
+        public async Task<bool> Existe(int clienteId)
+        {
+            return await _context.Clientes
+                .AnyAsync(c => c.ClienteId == clienteId);
+        }
+
+        // Eliminar
+        public async Task<bool> Eliminar(int clienteId)
+        {
+            var cliente = await _context.Clientes.FindAsync(clienteId);
+            if (cliente == null) return false;
+
+            _context.Clientes.Remove(cliente);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        // Buscar
+        public async Task<Clientes?> Buscar(int id)
+        {
+            return await _context.Clientes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.ClienteId == id);
+        }
+
+        // Listar
+        public async Task<List<Clientes>> Listar(Expression<Func<Clientes, bool>> criterio)
+        {
+            return await _context.Clientes
+                .AsNoTracking()
+                .Where(criterio)
+                .ToListAsync();
+        }
     }
 }
