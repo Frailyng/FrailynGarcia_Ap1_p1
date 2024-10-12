@@ -7,7 +7,7 @@
 namespace FrailynGarcia_Ap1_p1.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     PrestamosId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Deudores = table.Column<string>(type: "TEXT", nullable: false),
-                    Conceptos = table.Column<string>(type: "TEXT", nullable: false),
+                    Conceptos = table.Column<string>(type: "TEXT", nullable: true),
                     Montos = table.Column<int>(type: "INTEGER", nullable: false),
                     Balance = table.Column<int>(type: "INTEGER", nullable: false)
                 },
