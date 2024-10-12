@@ -1,5 +1,132 @@
-﻿<h3>Index</h3>
+﻿@page "/Cobro/Index"
+@inject CobroService CobroService
+@rendermode InteractiveServer
+
+<PageTitle></PageTitle>
+<div class="Container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h5 class="card-title">Cobros</h5>
+        </div>
+
+        <div class="card-body">
+            <!-- Filtros de búsqueda y botón crear -->
+            <div class="mb-3 row align-items-end">
+                <div class="col-md-3">
+                    <label for="filtrarPor" class="form-label">Filtrar por:</label>
+                    <select id="filtrarPor" class="form-select form-select-sm" @bind="Filtro">
+                        <option value="cobroid">CobroId</option>
+                        <option value="fecha">Fecha</option>
+                        <option value="deudorid">DeudorId</option>
+                        <option value="monto">Monto</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="valorFiltro" class="form-label">Buscar:</label>
+                    <input type="text" id="valorFiltro" class="form-control form-control-sm" placeholder="Buscar..." @bind="valorFiltro">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-primary btn-sm" type="button" @onclick="Buscar">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                </div>
+                <div class="col-md-2 text-end">
+                    <!-- Botón Crear que lleva a /Cobro/Create -->
+                    <a href="/Cobro/Create" class="btn btn-success btn-sm">
+                        <span class="bi bi-plus-square"></span> Crear
+                    </a>
+                </div>
+            </div>
+            <!-- Tabla -->
+            <table class="table table-light table-bordered">
+                <thead class="table table-striped text-center text-white bg-primary">
+                    <tr>
+                        <th>CobroID</th>
+                        <th>Fecha</th>
+                        <th>DeudorId</th>
+                        <th>Montos</th>
+                        <th>Ver</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ListaCobros.Any())
+                    {
+                        foreach (var cobro in ListaCobros)
+                        {
+                            <tr>
+                                <td class="text-center">@cobro.CobroId</td>
+                                <td class="text-center">@cobro.Fecha</td>
+                                <td class="text-center">@cobro.DeudorId</td>
+                                <td class="text-center">@cobro.Monto</td>
+                                <td class="text-center">
+                                    <a href="/Cobro/Details/@cobro.CobroId" class="btn bi bi-eye"></a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/Cobro/Edit/@cobro.CobroId" class="btn bi bi-pencil-square"></a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/Cobro/Delete/@cobro.CobroId" class="btn bi bi-trash"></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center">No hay Cobros disponibles</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 
 @code {
+    public Cobros Cobro = new Cobros();
+    public List<Cobros> ListaCobros = new List<Cobros>();
 
+    private string Filtro = "cobroid";
+    private string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaCobros = await CobroService.Listar(p => true);
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await CobroService.Guardar(Cobro);
+    }
+
+    public async Task Buscar()
+    {
+        if (valorFiltro.Trim() != "")
+        {
+            if (Filtro == "cobroid" && int.TryParse(valorFiltro, out int cobroid))
+            {
+                ListaCobros = await CobroService.Listar(p => p.CobroId == cobroid);
+            }
+            else if (Filtro == "fecha" && DateTime.TryParse(valorFiltro, out DateTime fecha))
+            {
+                ListaCobros = await CobroService.Listar(p => p.Fecha == fecha);
+            }
+            else if (Filtro == "deudorid" && int.TryParse(valorFiltro, out int deudorid))
+            {
+                ListaCobros = await CobroService.Listar(p => p.DeudorId == deudorid);
+            }
+            else if (Filtro == "monto" && int.TryParse(valorFiltro, out int monto))
+            {
+                ListaCobros = await CobroService.Listar(p => p.Monto == monto);
+            }
+        }
+        else
+        {
+            ListaCobros = await CobroService.Listar(p => true);
+        }
+
+    }
 }
