@@ -1,5 +1,88 @@
-﻿<h3>Delete</h3>
+﻿@page "/Cobro/Delete"
+@page "/Cobro/Delete/{Id:int}"
+@inject CobroService CobroService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+@if (Cobro != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <!-- Header -->
+            <div class="card-header bg-primary text-white text-center py-2 rounded">
+                <h3><strong>Eliminar Cobro</strong></h3>
+            </div>
+            <div class="card-header">
+                <h3 class="text-danger">¿Estás seguro de que quieres eliminar este cobro?</h3>
+            </div>
+            <!-- Body -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card shadow-lg">
+                            <div class="card-header">
+                                <h3 class="text-center"><strong>Datos del Cobro</strong></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="border-primary border-2 borde">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <ul class="list-unstyled">
+                                                    <li><strong>CobroId:</strong> @Cobro.CobroId</li>
+                                                    <li><strong>Fecha:</strong> @Cobro.Fecha?.ToString("dd/MM/yyyy")</li>
+                                                    <li><strong>DeudorId:</strong> @Cobro.DeudorId</li>
+                                                    <li><strong>Monto:</strong> @Cobro.Monto</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-danger" @onclick="EliminarCobro">
+                    <i class="bi bi-trash-fill"></i> Eliminar
+                </button>
+                <a href="/Cobro/Index" class="btn btn-outline-primary">
+                    <i class="bi bi-box-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Registro no encontrado.</p>
+}
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+    public Cobros? Cobro { get; set; } = new Cobros();
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            Cobro = await CobroService.Buscar(Id);
+        }
+    }
+
+    public async Task EliminarCobro()
+    {
+        if (Id == 0 && Cobro == null)
+        {
+            return;
+        }
+        if (await CobroService.Eliminar(Id))
+        {
+            navigationManager.NavigateTo("/Cobro/Index");
+        }
+    }
 }
