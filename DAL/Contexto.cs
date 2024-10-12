@@ -17,6 +17,12 @@ namespace FrailynGarcia_Ap1_p1.DAL
 
         public DbSet<CobroDetalle> CobroDetalle { get; set; }
 
+        public DbSet<Clientes> Clientes { get; set; }
+
+        public DbSet<ClientesDetalle> ClientesDetalle { get; set; }
+
+        public DbSet<TiposTelefonos> TiposTelefonos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
