@@ -17,6 +17,7 @@ builder.Services.AddScoped<DeudorService>();
 builder.Services.AddScoped<CobroService>();
 builder.Services.AddScoped<CobroDetalleService>();
 builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<TiposTelefonoService>();
 
 
 var app = builder.Build();

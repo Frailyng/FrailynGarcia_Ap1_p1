@@ -1,5 +1,159 @@
-﻿<h3>RegistroClientesDetallle</h3>
+﻿@page "/RegistroClienteDetalle/Create"
+@inject ClienteService ClienteService
+@inject TiposTelefonoService TiposTelefonoService
+@inject TelefonosService TelefonosService
+@rendermode InteractiveServer
+
+<EditForm Model="Cliente" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h5 class="card-title">Registro de Clientes</h5>
+        </div>
+
+        <div class="card-body">
+            <!-- ClienteId con botón de búsqueda solo con ícono -->
+            <div class="row mb-3">
+                <div class="col-md-10">
+                    <label for="ClienteId" class="form-label">Código Cliente:</label>
+                    <InputNumber @bind-Value="Cliente.ClienteId" class="form-control" style="font-size: 0.8em;" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-outline-primary btn-sm" type="button" @onclick="Buscar">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Nombres -->
+            <div class="mb-3">
+                <label for="Nombres" class="form-label">Nombres:</label>
+                <InputText @bind-Value="Cliente.Nombres" class="form-control" />
+                <ValidationMessage For="@(() => Cliente.Nombres)" />
+            </div>
+
+            <!-- RNC -->
+            <div class="mb-3">
+                <label for="Rnc" class="form-label">RNC:</label>
+                <InputText @bind-Value="Cliente.Rnc" class="form-control" />
+                <ValidationMessage For="@(() => Cliente.Rnc)" />
+            </div>
+
+            <!-- Dirección -->
+            <div class="mb-3">
+                <label for="Direccion" class="form-label">Dirección:</label>
+                <InputText @bind-Value="Cliente.Direccion" class="form-control" />
+            </div>
+
+            <!-- Límite de Crédito -->
+            <div class="mb-3">
+                <label for="LimiteCredito" class="form-label">Límite de Crédito:</label>
+                <InputNumber @bind-Value="Cliente.LimiteCredito" class="form-control" />
+            </div>
+
+            <!-- Título: Teléfonos de Cliente -->
+            <h5>Teléfonos de Cliente</h5>
+
+            <!-- Filas para TipoTelefono y Telefono -->
+            <div class="row mb-3">
+                <!-- Label y Input para TipoTelefono con data del servicio -->
+                <div class="col-md-6">
+                    <label for="TipoTelefono" class="form-label">Tipo de Teléfono:</label>
+                    <InputText @bind-Value="NuevoTelefono.TipoTelefono" class="form-control" list="tiposTelefonos" />
+                    <datalist id="tiposTelefonos">
+                        @foreach (var tipo in TiposTelefonos)
+                        {
+                            <option value="@tipo.Descripcion"></option>
+                        }
+                    </datalist>
+                </div>
+
+                <!-- Label y Input para Telefono con máscara -->
+                <div class="col-md-6">
+                    <label for="Telefono" class="form-label">Teléfono:</label>
+                    <InputText @bind-Value="NuevoTelefono.NumeroTelefono" class="form-control" placeholder="(809)-407-0696" @oninput="AplicarMascara" />
+                </div>
+            </div>
+
+            <!-- Botón azul para agregar teléfono -->
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary btn-sm" type="button" @onclick="AgregarTelefono">
+                    <i class="bi bi-plus"></i> Agregar
+                </button>
+            </div>
+
+            <!-- Mostrar teléfonos agregados -->
+            <ul>
+                @foreach (var telefono in Cliente.Telefonos)
+                {
+                    <li>@telefono.TipoTelefono - @telefono.NumeroTelefono</li>
+                }
+            </ul>
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-floppy mt-3"></span> Guardar </button>
+                <a type="button" href="/Cliente/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 @code {
+    public Clientes Cliente { get; set; } = new Clientes();
+    public Telefonos NuevoTelefono { get; set; } = new Telefonos();
+    public List<TiposTelefonos> TiposTelefonos { get; set; } = new List<TiposTelefonos>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        TiposTelefonos = await TiposTelefonoService.ObtenerEntidadesAsync();
+    }
+
+    public void Nuevo()
+    {
+        Cliente = new Clientes();
+        Existe = false;
+    }
+
+    public async Task Guardar()
+    {
+        if (!Existe)
+        {
+            await ClienteService.Guardar(Cliente);
+
+            // Guardar teléfonos asociados al cliente
+            foreach (var telefono in Cliente.Telefonos)
+            {
+                telefono.ClienteId = Cliente.ClienteId;
+                await TelefonosService.Guardar(telefono);
+            }
+
+            Nuevo();
+        }
+    }
+
+    public void Buscar()
+    {
+        // Lógica para buscar cliente por código o cualquier otro criterio
+    }
+
+    public void AgregarTelefono()
+    {
+        Cliente.Telefonos.Add(new Telefonos
+            {
+                TipoTelefono = NuevoTelefono.TipoTelefono,
+                NumeroTelefono = NuevoTelefono.NumeroTelefono
+            });
+
+        NuevoTelefono = new Telefonos(); // Limpiar el formulario para agregar otro
+    }
+
+    public void AplicarMascara(ChangeEventArgs e)
+    {
+        string telefono = e.Value.ToString();
+        // Aquí puedes implementar la lógica para formatear el número de teléfono (809)-407-0696
+    }
 }
+
