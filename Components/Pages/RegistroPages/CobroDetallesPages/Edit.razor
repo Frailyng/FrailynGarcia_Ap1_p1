@@ -1,5 +1,104 @@
-﻿<h3>Edit</h3>
+﻿@page "/CobroDetalle/Edit/{DetalleId:int}"
+@inject CobroDetalleService CobroDetalleService
+@inject CobroService CobroService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm Model="CobroDetalle" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+        <div class="card-header bg-primary text-white" style="text-align: center;">
+            <h3><i class="fas fa-clipboard-list"></i> Editar Detalle de Cobro</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="DetalleId" class="form-label">DetalleId:</label>
+                    <div class="input-group">
+                        <div style="width: 40%; height: 1em;">
+                            <InputNumber @bind-Value="CobroDetalle.DetalleId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="CobroId" class="form-label">CobroId:</label>
+                <InputNumber @bind-Value="CobroDetalle.CobroId" class="form-control" />
+                <ValidationMessage For="@(() => CobroDetalle.CobroId)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="PrestamoId" class="form-label">PrestamoId:</label>
+                <InputNumber @bind-Value="CobroDetalle.PrestamoId" class="form-control" />
+                <ValidationMessage For="@(() => CobroDetalle.PrestamoId)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="ValorCobrado" class="form-label">Valor Cobrado:</label>
+                <InputNumber @bind-Value="CobroDetalle.ValorCobrado" class="form-control" />
+                <ValidationMessage For="@(() => CobroDetalle.ValorCobrado)" />
+            </div>
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo">
+                    <span class="bi bi-plus"></span> Nuevo
+                </button>
+                <button type="submit" class="btn btn-outline-success ml-2">
+                    <span class="bi bi-floppy mt-3"></span> Guardar
+                </button>
+                <a type="button" href="/CobroDetalle/Index/" class="btn btn-outline-danger">
+                    <span class="bi bi-arrow-bar-left"></span> Retroceder
+                </a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 @code {
+    [Parameter]
+    public int? DetalleId { get; set; }
+    public CobroDetalle CobroDetalle { get; set; } = new CobroDetalle();
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (DetalleId.HasValue)
+        {
+            CobroDetalle.DetalleId = DetalleId.Value;
+            await Buscar();
+        }
+    }
+
+    public void Nuevo()
+    {
+        CobroDetalle = new CobroDetalle();
+    }
+
+    public async Task Buscar()
+    {
+        var detalleEncontrado = await CobroDetalleService.Buscar(CobroDetalle.DetalleId);
+        if (detalleEncontrado != null)
+        {
+            CobroDetalle = detalleEncontrado;
+        }
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await CobroDetalleService.Guardar(CobroDetalle);
+        if (guardo)
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        await CobroDetalleService.Eliminar(CobroDetalle.DetalleId);
+        Nuevo();
+    }
 }
