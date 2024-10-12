@@ -1,5 +1,57 @@
-﻿<h3>Details</h3>
+﻿@page "/Cobro/Details"
+@page "/Cobro/Details/{CobroId:int}"
+@inject CobroService CobroService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalles de Cobros</PageTitle>
+
+@if (Cobro != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header bg-primary text-white text-center py-2 rounded">
+                <h3 class="text-center"><strong>Detalles del Cobro</strong></h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>CobroId:</strong> @Cobro.CobroId</li>
+                                <li><strong>DeudorId:</strong> @Cobro.DeudorId</li> <!-- Mostrando el DeudorId directamente -->
+                                <li><strong>Fecha:</strong> @Cobro.Fecha?.ToString("dd/MM/yyyy")</li> <!-- Solo la fecha, sin la hora -->
+                                <li><strong>Monto:</strong> @Cobro.Monto</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver">
+                    <i class="bi bi-box-arrow-left"></i> Volver
+                </button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Cobro no encontrado.</p>
+}
 
 @code {
+    [Parameter]
+    public int CobroId { get; set; }
+    public Cobros? Cobro { get; set; } = new Cobros();
 
+    protected override async Task OnInitializedAsync()
+    {
+        Cobro = await CobroService.Buscar(CobroId);
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Cobro/Index");
+    }
 }
