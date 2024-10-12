@@ -14,6 +14,22 @@ namespace FrailynGarcia_Ap1_p1.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Clientes",
+                columns: table => new
+                {
+                    ClienteId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nombres = table.Column<string>(type: "TEXT", nullable: false),
+                    Rnc = table.Column<string>(type: "TEXT", nullable: false),
+                    Direccion = table.Column<string>(type: "TEXT", nullable: false),
+                    LimiteCredito = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clientes", x => x.ClienteId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Deudores",
                 columns: table => new
                 {
@@ -40,6 +56,61 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prestamos", x => x.PrestamosId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TiposTelefonos",
+                columns: table => new
+                {
+                    TipoId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TiposTelefonos", x => x.TipoId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientesDetalle",
+                columns: table => new
+                {
+                    DetellaId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ClienteId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TipoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Telefono = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientesDetalle", x => x.DetellaId);
+                    table.ForeignKey(
+                        name: "FK_ClientesDetalle_Clientes_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Clientes",
+                        principalColumn: "ClienteId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Telefonos",
+                columns: table => new
+                {
+                    TelefonoId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ClienteId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TipoTelefono = table.Column<string>(type: "TEXT", nullable: false),
+                    NumeroTelefono = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Telefonos", x => x.TelefonoId);
+                    table.ForeignKey(
+                        name: "FK_Telefonos_Clientes_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Clientes",
+                        principalColumn: "ClienteId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,6 +171,21 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     { 3, "Abel" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "TiposTelefonos",
+                columns: new[] { "TipoId", "Descripcion" },
+                values: new object[,]
+                {
+                    { 1, "Telefono" },
+                    { 2, "Celular" },
+                    { 3, "Oficina" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientesDetalle_ClienteId",
+                table: "ClientesDetalle",
+                column: "ClienteId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_CobroDetalle_CobroId",
                 table: "CobroDetalle",
@@ -114,19 +200,36 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 name: "IX_Cobros_DeudorId",
                 table: "Cobros",
                 column: "DeudorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Telefonos_ClienteId",
+                table: "Telefonos",
+                column: "ClienteId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ClientesDetalle");
+
+            migrationBuilder.DropTable(
                 name: "CobroDetalle");
+
+            migrationBuilder.DropTable(
+                name: "Telefonos");
+
+            migrationBuilder.DropTable(
+                name: "TiposTelefonos");
 
             migrationBuilder.DropTable(
                 name: "Cobros");
 
             migrationBuilder.DropTable(
                 name: "Prestamos");
+
+            migrationBuilder.DropTable(
+                name: "Clientes");
 
             migrationBuilder.DropTable(
                 name: "Deudores");

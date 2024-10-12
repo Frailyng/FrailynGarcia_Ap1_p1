@@ -17,6 +17,55 @@ namespace FrailynGarcia_Ap1_p1.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Clientes", b =>
+                {
+                    b.Property<int>("ClienteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("LimiteCredito")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Rnc")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ClienteId");
+
+                    b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.ClientesDetalle", b =>
+                {
+                    b.Property<int>("DetellaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TipoId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DetellaId");
+
+                    b.HasIndex("ClienteId");
+
+                    b.ToTable("ClientesDetalle");
+                });
+
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.CobroDetalle", b =>
                 {
                     b.Property<int>("DetalleId")
@@ -120,6 +169,71 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.ToTable("Prestamos");
                 });
 
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Telefonos", b =>
+                {
+                    b.Property<int>("TelefonoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NumeroTelefono")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TipoTelefono")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TelefonoId");
+
+                    b.HasIndex("ClienteId");
+
+                    b.ToTable("Telefonos");
+                });
+
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.TiposTelefonos", b =>
+                {
+                    b.Property<int>("TipoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TipoId");
+
+                    b.ToTable("TiposTelefonos");
+
+                    b.HasData(
+                        new
+                        {
+                            TipoId = 1,
+                            Descripcion = "Telefono"
+                        },
+                        new
+                        {
+                            TipoId = 2,
+                            Descripcion = "Celular"
+                        },
+                        new
+                        {
+                            TipoId = 3,
+                            Descripcion = "Oficina"
+                        });
+                });
+
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.ClientesDetalle", b =>
+                {
+                    b.HasOne("FrailynGarcia_Ap1_p1.Models.Clientes", null)
+                        .WithMany("ClientesDetalle")
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.CobroDetalle", b =>
                 {
                     b.HasOne("FrailynGarcia_Ap1_p1.Models.Cobros", "Cobro")
@@ -148,6 +262,22 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                         .IsRequired();
 
                     b.Navigation("Deudor");
+                });
+
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Telefonos", b =>
+                {
+                    b.HasOne("FrailynGarcia_Ap1_p1.Models.Clientes", "Cliente")
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Clientes", b =>
+                {
+                    b.Navigation("ClientesDetalle");
                 });
 #pragma warning restore 612, 618
         }
