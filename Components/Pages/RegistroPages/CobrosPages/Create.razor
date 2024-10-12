@@ -1,5 +1,134 @@
-﻿<h3>Create</h3>
+﻿@page "/Cobro/Create"
+@inject CobroService CobroService
+@inject DeudorService DeudorService
+@rendermode InteractiveServer
+
+<EditForm Model="Cobro" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+        <div class="card-header bg-primary text-white" style="text-align: center;">
+            <h3> <i class="fas fa-clipboard-list"></i> Cobro</h3>
+        </div>
+
+        <div class="card-body">
+
+            @* CobroId *@
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="CobroId" class="form-label">CobroId:</label>
+                    <div class="input-group">
+                        <div style="width: 40%; height: 1em;">
+                            <InputNumber @bind-Value="Cobro.CobroId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            @* Fecha *@
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Fecha" class="form-label">Fecha:</label>
+                    <div class="input-group">
+                        <InputDate @bind-Value="Cobro.Fecha" class="form-control" style="font-size: 0.8em;" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deudor (Cargar desde Deudores) -->
+            <div class="mb-3">
+                <label for="DeudorId" class="form-label">DeudorId:</label>
+                <InputSelect @bind-Value="Cobro.DeudorId" class="form-control">
+                    <option value="">Seleccione un Deudor</option>
+                    @foreach (var Deudor in ListaDeudores)
+                    {
+                        <option value="@Deudor.DeudorId">@Deudor.DeudorId</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => Deudor.DeudorId)" />
+            </div>
+
+            @* Monto *@
+            <div class="mb-3">
+                <label for="Monto" class="form-label">Monto:</label>
+                <InputNumber @bind-Value="Cobro.Monto" class="form-control" />
+                <ValidationMessage For="@(() => Cobro.Monto)" />
+            </div>
+
+
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-floppy mt-3"></span> Guardar </button>
+                <a type="button" href="/Cobro/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 @code {
+    public int Id { get; set; }
+    public Cobros Cobro { get; set; } = new Cobros();
+    public Deudores Deudor { get; set; } = new Deudores();
+    public List<Deudores> ListaDeudores { get; set; } = new List<Deudores>();
+    private bool Existe = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        ListaDeudores = await DeudorService.ObtenerEntidadesAsync();
+
+        // Si no tiene una fecha establecida, asigna la fecha actual como valor predeterminado.
+        if (Cobro.Fecha == default(DateOnly))
+        {
+            Cobro.Fecha = DateOnly.FromDateTime(DateTime.Now);  // Convertir DateTime a DateOnly
+        }
+    }
+
+    public void Nuevo()
+    {
+        Cobro = new Cobros();
+        Existe = false;
+    }
+
+    public async Task Buscar()
+    {
+        Existe = false;
+        var CobroEcontrado = await CobroService.Buscar(Cobro.CobroId);
+        if (CobroEcontrado != null)
+        {
+            Cobro = CobroEcontrado;
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        Existe = await CobroService.Existe(Cobro.CobroId);
+        return !Existe;
+    }
+
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            return;
+        }
+        var guardo = await CobroService.Guardar(Cobro);
+        if (guardo)
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        var eliminado = await CobroService.Eliminar(Cobro.CobroId);
+        Nuevo();
+    }
 }
+

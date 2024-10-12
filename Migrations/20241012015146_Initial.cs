@@ -48,7 +48,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 {
                     CobroId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Fecha = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     DeudorId = table.Column<int>(type: "INTEGER", nullable: false),
                     Monto = table.Column<int>(type: "INTEGER", nullable: false)
                 },

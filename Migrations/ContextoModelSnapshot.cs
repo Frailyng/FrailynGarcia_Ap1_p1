@@ -50,7 +50,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.Property<int>("DeudorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("Fecha")
+                    b.Property<DateOnly?>("Fecha")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

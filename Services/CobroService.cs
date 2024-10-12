@@ -41,20 +41,6 @@ public class CobroService
             .AnyAsync(r => r.CobroId == cobroid);
     }
 
-    //Existe 2
-    public async Task<bool> Existe(DateTime? fecha, int? id = null)
-    {
-        return await _context.Cobros
-            .AnyAsync(r => r.Fecha.Equals(fecha));
-    }
-
-    //Existe 3
-    public async Task<bool> Existe(int cobroid, DateTime? fecha)
-    {
-        return await _context.Cobros
-            .AnyAsync(r => r.CobroId != cobroid && r.Fecha.Equals(fecha));
-    }
-
     //Eliminar
     public async Task<bool> Eliminar(int cobroid)
     {

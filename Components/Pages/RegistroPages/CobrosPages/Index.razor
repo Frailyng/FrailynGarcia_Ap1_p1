@@ -110,7 +110,7 @@
             {
                 ListaCobros = await CobroService.Listar(p => p.CobroId == cobroid);
             }
-            else if (Filtro == "fecha" && DateTime.TryParse(valorFiltro, out DateTime fecha))
+            else if (Filtro == "fecha" && DateOnly.TryParse(valorFiltro, out DateOnly fecha))
             {
                 ListaCobros = await CobroService.Listar(p => p.Fecha == fecha);
             }

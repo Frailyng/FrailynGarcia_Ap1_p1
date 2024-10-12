@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrailynGarcia_Ap1_p1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20241012005152_Initial")]
+    [Migration("20241012015146_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -53,7 +53,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.Property<int>("DeudorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("Fecha")
+                    b.Property<DateOnly?>("Fecha")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
