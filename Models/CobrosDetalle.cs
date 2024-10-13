@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FrailynGarcia_Ap1_p1.Models
 {
-    public class CobroDetalle
+    public class CobrosDetalle
     {
         [Key]
         public int DetalleId { get; set; }

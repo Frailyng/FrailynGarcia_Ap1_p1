@@ -62,7 +62,7 @@
 @code {
     [Parameter]
     public int? DetalleId { get; set; }
-    public CobroDetalle CobroDetalle { get; set; } = new CobroDetalle();
+    public CobrosDetalle CobroDetalle { get; set; } = new CobrosDetalle();
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,7 +75,7 @@
 
     public void Nuevo()
     {
-        CobroDetalle = new CobroDetalle();
+        CobroDetalle = new CobrosDetalle();
     }
 
     public async Task Buscar()

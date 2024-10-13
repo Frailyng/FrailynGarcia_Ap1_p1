@@ -67,7 +67,7 @@
 </EditForm>
 
 @code {
-    public CobroDetalle CobroDetalle { get; set; } = new CobroDetalle();
+    public CobrosDetalle CobroDetalle { get; set; } = new CobrosDetalle();
     public List<Cobros> ListaCobros { get; set; } = new List<Cobros>();
     public List<Prestamos> ListaPrestamos { get; set; } = new List<Prestamos>();
 
@@ -79,7 +79,7 @@
 
     public void Nuevo()
     {
-        CobroDetalle = new CobroDetalle();
+        CobroDetalle = new CobrosDetalle();
     }
 
     public async Task Guardar()

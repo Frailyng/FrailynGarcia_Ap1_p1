@@ -14,7 +14,7 @@ public class CobroDetalleService
         _context = contexto;
     }
 
-    public async Task<bool> Guardar(CobroDetalle cobrodetalle)
+    public async Task<bool> Guardar(CobrosDetalle cobrodetalle)
     {
         if (!await Existe(cobrodetalle.DetalleId))
             return await Insertar(cobrodetalle);
@@ -22,13 +22,13 @@ public class CobroDetalleService
             return await Modificar(cobrodetalle);
     }
 
-    public async Task<bool> Insertar(CobroDetalle cobrodetalle)
+    public async Task<bool> Insertar(CobrosDetalle cobrodetalle)
     {
         _context.CobroDetalle.Add(cobrodetalle);
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> Modificar(CobroDetalle cobrodetalle)
+    public async Task<bool> Modificar(CobrosDetalle cobrodetalle)
     {
         _context.Update(cobrodetalle);
         return await _context.SaveChangesAsync() > 0;
@@ -51,7 +51,7 @@ public class CobroDetalleService
     }
 
     //Buscar
-    public async Task<CobroDetalle?> Buscar(int id)
+    public async Task<CobrosDetalle?> Buscar(int id)
     {
         return await _context.CobroDetalle
             .AsNoTracking()
@@ -59,7 +59,7 @@ public class CobroDetalleService
     }
 
     // Listar
-    public async Task<List<CobroDetalle>> Listar(Expression<Func<CobroDetalle, bool>> criterio)
+    public async Task<List<CobrosDetalle>> Listar(Expression<Func<CobrosDetalle, bool>> criterio)
     {
         return await _context.CobroDetalle
             .AsNoTracking()
