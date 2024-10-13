@@ -149,7 +149,8 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     CobroId = table.Column<int>(type: "INTEGER", nullable: false),
                     PrestamoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ValorCobrado = table.Column<int>(type: "INTEGER", nullable: false)
+                    DeudorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MontoPagado = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,6 +160,12 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                         column: x => x.CobroId,
                         principalTable: "Cobros",
                         principalColumn: "CobroId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CobroDetalle_Deudores_DeudorId",
+                        column: x => x.DeudorId,
+                        principalTable: "Deudores",
+                        principalColumn: "DeudorId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CobroDetalle_Prestamos_PrestamoId",
@@ -197,6 +204,11 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 name: "IX_CobroDetalle_CobroId",
                 table: "CobroDetalle",
                 column: "CobroId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CobroDetalle_DeudorId",
+                table: "CobroDetalle",
+                column: "DeudorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CobroDetalle_PrestamoId",

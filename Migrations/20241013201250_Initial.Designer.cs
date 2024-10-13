@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrailynGarcia_Ap1_p1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20241013192256_Initial")]
+    [Migration("20241013201250_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -101,15 +101,20 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.Property<int>("CobroId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PrestamoId")
+                    b.Property<int>("DeudorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ValorCobrado")
+                    b.Property<int>("MontoPagado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrestamoId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("DetalleId");
 
                     b.HasIndex("CobroId");
+
+                    b.HasIndex("DeudorId");
 
                     b.HasIndex("PrestamoId");
 
@@ -255,8 +260,14 @@ namespace FrailynGarcia_Ap1_p1.Migrations
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.CobrosDetalle", b =>
                 {
                     b.HasOne("FrailynGarcia_Ap1_p1.Models.Cobros", "Cobro")
-                        .WithMany()
+                        .WithMany("Detalles")
                         .HasForeignKey("CobroId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FrailynGarcia_Ap1_p1.Models.Deudores", "Deudor")
+                        .WithMany()
+                        .HasForeignKey("DeudorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -267,6 +278,8 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                         .IsRequired();
 
                     b.Navigation("Cobro");
+
+                    b.Navigation("Deudor");
 
                     b.Navigation("Prestamo");
                 });
@@ -296,6 +309,11 @@ namespace FrailynGarcia_Ap1_p1.Migrations
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Clientes", b =>
                 {
                     b.Navigation("ClientesDetalle");
+                });
+
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Cobros", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 #pragma warning restore 612, 618
         }
