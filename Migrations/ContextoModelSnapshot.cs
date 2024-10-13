@@ -66,30 +66,6 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.ToTable("ClientesDetalle");
                 });
 
-            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.CobroDetalle", b =>
-                {
-                    b.Property<int>("DetalleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CobroId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PrestamoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ValorCobrado")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("DetalleId");
-
-                    b.HasIndex("CobroId");
-
-                    b.HasIndex("PrestamoId");
-
-                    b.ToTable("CobroDetalle");
-                });
-
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Cobros", b =>
                 {
                     b.Property<int>("CobroId")
@@ -111,6 +87,30 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.HasIndex("DeudorId");
 
                     b.ToTable("Cobros");
+                });
+
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.CobrosDetalle", b =>
+                {
+                    b.Property<int>("DetalleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CobroId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrestamoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ValorCobrado")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DetalleId");
+
+                    b.HasIndex("CobroId");
+
+                    b.HasIndex("PrestamoId");
+
+                    b.ToTable("CobroDetalle");
                 });
 
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Deudores", b =>
@@ -157,14 +157,18 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.Property<string>("Conceptos")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("DeudorId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Deudores")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Montos")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("PrestamosId");
+
+                    b.HasIndex("DeudorId");
 
                     b.ToTable("Prestamos");
                 });
@@ -234,7 +238,18 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.CobroDetalle", b =>
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Cobros", b =>
+                {
+                    b.HasOne("FrailynGarcia_Ap1_p1.Models.Deudores", "Deudor")
+                        .WithMany()
+                        .HasForeignKey("DeudorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Deudor");
+                });
+
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.CobrosDetalle", b =>
                 {
                     b.HasOne("FrailynGarcia_Ap1_p1.Models.Cobros", "Cobro")
                         .WithMany()
@@ -253,7 +268,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.Navigation("Prestamo");
                 });
 
-            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Cobros", b =>
+            modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Prestamos", b =>
                 {
                     b.HasOne("FrailynGarcia_Ap1_p1.Models.Deudores", "Deudor")
                         .WithMany()

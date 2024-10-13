@@ -26,16 +26,17 @@
 
             <!-- Deudor (Cargar desde Deudores) -->
             <div class="mb-3">
-                <label for="Nombres" class="form-label">Nombres:</label>
-                <InputSelect @bind-Value="Prestamo.Deudores" class="form-control">
+                <label for="DeudorId" class="form-label">Deudor:</label>
+                <InputSelect @bind-Value="Prestamo.DeudorId" class="form-control" @onchange="@(async e => await ActualizarDeudor())">
                     <option value="">Seleccione un Deudor</option>
-                    @foreach (var Deudor in ListaDeudores)
+                    @foreach (var deudor in ListaDeudores)
                     {
-                        <option value="@Deudor.Nombres">@Deudor.Nombres</option>
+                        <option value="@deudor.DeudorId">@deudor.Nombres</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="@(() => Deudor.Nombres)" />
+                <ValidationMessage For="@(() => Prestamo.DeudorId)" />
             </div>
+
 
             @* Conceptos *@
             <div class="mb-3">
@@ -97,16 +98,23 @@
 
     public async Task<bool> Validar()
     {
-        Existe = await PrestamoService.Existe(Prestamo.Deudores);
+
+        Existe = await PrestamoService.Existe(Prestamo.PrestamosId);
         return !Existe;
     }
 
+
     public async Task Guardar()
     {
+
+        await ActualizarDeudor();
+
         if (!await Validar())
         {
             return;
         }
+
+
         var guardo = await PrestamoService.Guardar(Prestamo);
         if (guardo)
         {
@@ -114,9 +122,21 @@
         }
     }
 
+
     public async Task Eliminar()
     {
         var eliminado = await PrestamoService.Eliminar(Prestamo.PrestamosId);
         Nuevo();
     }
+
+    public async Task ActualizarDeudor()
+    {
+        var deudorSeleccionado = ListaDeudores.FirstOrDefault(d => d.DeudorId == Prestamo.DeudorId);
+        if (deudorSeleccionado != null)
+        {
+            Prestamo.Deudores = deudorSeleccionado.Nombres;
+        }
+    }
+
+
 }

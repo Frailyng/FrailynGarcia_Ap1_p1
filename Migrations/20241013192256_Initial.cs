@@ -43,22 +43,6 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Prestamos",
-                columns: table => new
-                {
-                    PrestamosId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Deudores = table.Column<string>(type: "TEXT", nullable: false),
-                    Conceptos = table.Column<string>(type: "TEXT", nullable: true),
-                    Montos = table.Column<int>(type: "INTEGER", nullable: false),
-                    Balance = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Prestamos", x => x.PrestamosId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TiposTelefonos",
                 columns: table => new
                 {
@@ -135,6 +119,29 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Prestamos",
+                columns: table => new
+                {
+                    PrestamosId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DeudorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Deudores = table.Column<string>(type: "TEXT", nullable: true),
+                    Conceptos = table.Column<string>(type: "TEXT", nullable: true),
+                    Montos = table.Column<int>(type: "INTEGER", nullable: false),
+                    Balance = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prestamos", x => x.PrestamosId);
+                    table.ForeignKey(
+                        name: "FK_Prestamos_Deudores_DeudorId",
+                        column: x => x.DeudorId,
+                        principalTable: "Deudores",
+                        principalColumn: "DeudorId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CobroDetalle",
                 columns: table => new
                 {
@@ -199,6 +206,11 @@ namespace FrailynGarcia_Ap1_p1.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Cobros_DeudorId",
                 table: "Cobros",
+                column: "DeudorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prestamos_DeudorId",
+                table: "Prestamos",
                 column: "DeudorId");
 
             migrationBuilder.CreateIndex(

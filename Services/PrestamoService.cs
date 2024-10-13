@@ -86,4 +86,12 @@ public class PrestamoService
             .ToListAsync();
     }
 
+    public async Task<List<Prestamos>> ObtenerPrestamosPorDeudor(int deudorId)
+    {
+        return await _context.Prestamos
+            .Where(p => p.DeudorId == deudorId)
+            .ToListAsync();
+    }
+
+
 }
