@@ -81,6 +81,7 @@
                         <button class="btn btn-primary btn-sm" @onclick="AgregarTelefono">
                             <i class="bi bi-plus"></i> Agregar
                         </button>
+
                     </div>
                 </div>
 
@@ -174,7 +175,7 @@
             return;
         }
 
-        // Asignar la lista de teléfonos al cliente
+        // Asignar la lista de teléfonos al cliente solo cuando se guarda
         Cliente.ClientesDetalle = ListaTelefonos.Select(t => new ClientesDetalle
             {
                 TipoId = t.TelefonoId,
@@ -203,6 +204,7 @@
     }
 
 
+
     public async Task Eliminar()
     {
         var eliminado = await ClienteService.Eliminar(Cliente.ClienteId);
@@ -215,6 +217,7 @@
         var tipoTelefonoSeleccionado = TiposTelefonos.FirstOrDefault(t => t.TipoId == TipoTelefono.TipoId);
         var tipoTelefonoDescripcion = tipoTelefonoSeleccionado?.Descripcion;
 
+        // Verificar que el tipo de teléfono esté seleccionado y que el número de teléfono no esté vacío
         if (tipoTelefonoSeleccionado != null && !string.IsNullOrWhiteSpace(NuevoTelefono.NumeroTelefono))
         {
             // Agregar el nuevo teléfono a la lista que se muestra en la tabla
@@ -225,11 +228,12 @@
                     NumeroTelefono = NuevoTelefono.NumeroTelefono
                 });
 
-            // Limpiar los campos
+            // Limpiar los campos del teléfono
             TipoTelefono = new TiposTelefonos();
             NuevoTelefono = new Telefonos();
         }
     }
+
 
 
     public void EliminarTelefono(Telefonos telefono)
