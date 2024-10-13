@@ -2,6 +2,7 @@
 @inject ClienteService ClienteService
 @inject TiposTelefonoService TiposTelefonoService
 @inject TelefonosService TelefonosService
+@inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
 <EditForm Model="Cliente" OnValidSubmit="Guardar">
@@ -51,71 +52,74 @@
                 <InputNumber @bind-Value="Cliente.LimiteCredito" class="form-control" />
             </div>
 
-            <!-- Título: Teléfonos de Cliente -->
-            <h5>Teléfonos de Cliente</h5>
+            <!-- Título: Teléfonos de Cliente dentro de borde verde -->
+            <div class="p-3 border border-success rounded">
+                <h5>Teléfonos de Cliente</h5>
 
-            <!-- Filas para TipoTelefono y Telefono -->
-            <div class="row mb-3">
-                <!-- Input para TipoTelefono con datos del servicio -->
-                <div class="col-md-6">
-                    <label for="TipoTelefono" class="form-label">Tipo de Teléfono:</label>
-                    <InputSelect @bind-Value="TipoTelefono.TipoId" class="form-control">
-                        <option value="">Seleccione un tipo</option>
-                        @foreach (var tipo in TiposTelefonos)
-                        {
-                            <option value="@tipo.TipoId">@tipo.Descripcion</option>
-                        }
-                    </InputSelect>
+                <!-- Filas para TipoTelefono y Telefono en una misma línea -->
+                <div class="row mb-3 align-items-end">
+                    <!-- Input para TipoTelefono con datos del servicio (ajustado en tamaño) -->
+                    <div class="col-md-4">
+                        <label for="TipoTelefono" class="form-label">Tipo de Teléfono:</label>
+                        <InputSelect @bind-Value="TipoTelefono.TipoId" class="form-control form-control-sm">
+                            <option value="">Seleccione un tipo</option>
+                            @foreach (var tipo in TiposTelefonos)
+                            {
+                                <option value="@tipo.TipoId">@tipo.Descripcion</option>
+                            }
+                        </InputSelect>
+                    </div>
+
+                    <!-- Input para Telefono con máscara aplicada -->
+                    <div class="col-md-4">
+                        <label for="Telefono" class="form-label">Teléfono:</label>
+                        <InputText id="telefonoInput" @bind-Value="NuevoTelefono.NumeroTelefono" class="form-control form-control-sm" @oninput="@(e => FormatearTelefono())" />
+                    </div>
+
+                    <!-- Botón para agregar teléfono en la misma línea -->
+                    <div class="col-md-4 d-flex justify-content-start">
+                        <button class="btn btn-primary btn-sm" @onclick="AgregarTelefono">
+                            <i class="bi bi-plus"></i> Agregar
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Input para Telefono con máscara -->
-                <div class="col-md-6">
-                    <label for="Telefono" class="form-label">Teléfono:</label>
-                    <InputText @bind-Value="NuevoTelefono.NumeroTelefono" class="form-control"/>
-                </div>
-            </div>
-
-            <!-- Botón azul para agregar teléfono -->
-            <div class="d-flex justify-content-end mb-3">
-                <button class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus"></i> Agregar
-                </button>
-            </div>
-
-            <!-- Tabla para mostrar teléfonos agregados -->
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Tipo de Teléfono</th>
-                        <th>Teléfono</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var telefono in TiposTelefonos)
-                    {
+                <!-- Tabla vacía inicialmente -->
+                <table class="table table-bordered">
+                    <thead>
                         <tr>
-                            <td>@telefono.TipoId</td>
-                            <td>@telefono.Descripcion</td>
-                            <td>
-                                <button class="btn btn-danger btn-sm">
-                                    <i class="bi bi-trash"></i> Eliminar
-                                </button>
-                            </td>
+                            <th>Tipo de Teléfono</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var telefono in ListaTelefonos)
+                        {
+                            <tr>
+                                <td>@telefono.TelefonoId</td>
+                                <td>@telefono.NumeroTelefono</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" @onclick="() => EliminarTelefono(telefono)">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
             <!-- Cantidad de teléfonos -->
             <div class="mt-3">
                 <label for="CantidadTelefonos" class="form-label">Cantidad de Teléfonos:</label>
+                <span>@ListaTelefonos.Count</span>
             </div>
         </div>
 
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
             <div class="btn-group">
-              <!-- <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button> -->
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
                 <a type="button" href="/Cliente/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
             </div>
         </div>
@@ -125,11 +129,10 @@
 @code {
     public Clientes Cliente { get; set; } = new Clientes();
     public Telefonos NuevoTelefono { get; set; } = new Telefonos();
+    public List<Telefonos> ListaTelefonos { get; set; } = new List<Telefonos>();
     public TiposTelefonos TipoTelefono { get; set; } = new TiposTelefonos(); 
     public List<TiposTelefonos> TiposTelefonos { get; set; } = new List<TiposTelefonos>();
     private bool Existe = false;
-
-    
 
     protected override async Task OnInitializedAsync()
     {
@@ -179,28 +182,46 @@
         var eliminado = await ClienteService.Eliminar(Cliente.ClienteId);
         Nuevo();
     }
-    /*
-    public void AgregarTelefono()
+
+    public async Task AgregarTelefono()
     {
-        var tipoTelefonoDescripcion = TiposTelefonos.FirstOrDefault(t => t.Id == NuevoTelefono.TipoTelefonoId)?.Descripcion;
+        var tipoTelefonoDescripcion = TiposTelefonos.FirstOrDefault(t => t.TipoId == NuevoTelefono.TelefonoId)?.Descripcion;
+        NuevoTelefono.TipoTelefono = tipoTelefonoDescripcion;
 
-        Cliente.Telefonos.Add(new Telefonos
-        {
-            TipoTelefono = tipoTelefonoDescripcion,
-            NumeroTelefono = NuevoTelefono.NumeroTelefono
-        });
+        // Agrega el teléfono en la base de datos
+        await TelefonosService.AgregarTelefono(NuevoTelefono);
 
-        NuevoTelefono = new Telefonos(); // Limpiar el formulario para agregar otro
+        ListaTelefonos.Add(NuevoTelefono);
+        NuevoTelefono = new Telefonos(); // Limpiar el formulario
     }
 
     public void EliminarTelefono(Telefonos telefono)
     {
-        Cliente.Telefonos.Remove(telefono);
+        ListaTelefonos.Remove(telefono);
     }
 
-    public void AplicarMascara(ChangeEventArgs e)
+    private void FormatearTelefono()
     {
-        string telefono = e.Value.ToString();
-        // Aquí puedes implementar la lógica para formatear el número de teléfono (809)-407-0696
-    }*/
+        JSRuntime.InvokeVoidAsync("formatearTelefono", "telefonoInput"); // Se invoca JSRuntime aquí
+    }
 }
+
+<script>
+    function formatearTelefono(elementId) {
+        var input = document.getElementById(elementId);
+        var value = input.value.replace(/\D/g, '');
+        var formattedValue = '';
+
+        if (value.length > 0) {
+            formattedValue = '(' + value.substring(0, 3);
+        }
+        if (value.length >= 4) {
+            formattedValue += ')-' + value.substring(3, 6);
+        }
+        if (value.length >= 7) {
+            formattedValue += '-' + value.substring(6, 10);
+        }
+
+        input.value = formattedValue;
+    }
+</script>

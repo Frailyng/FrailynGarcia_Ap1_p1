@@ -37,17 +37,15 @@ namespace FrailynGarcia_Ap1_p1.Services
             return telefono;
         }
 
-        public async Task<bool> EliminarTelefono(int id)
+        public async Task EliminarTelefono(int id)
         {
-            var telefono = await ObtenerPorIdAsync(id);
-            if (telefono == null)
+            var telefono = await _context.Telefonos.FindAsync(id);
+            if (telefono != null)
             {
-                return false; 
+                _context.Telefonos.Remove(telefono);
+                await _context.SaveChangesAsync();
             }
-
-            _context.Telefonos.Remove(telefono);
-            await _context.SaveChangesAsync();
-            return true;
         }
     }
 }
+
