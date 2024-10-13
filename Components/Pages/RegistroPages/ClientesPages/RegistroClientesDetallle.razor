@@ -147,7 +147,7 @@
     }
 
     public async Task Buscar()
-    {
+    { 
         Existe = false;
         var ClienteEncontrado = await ClienteService.Buscar(Cliente.ClienteId);
         if (ClienteEncontrado != null)
