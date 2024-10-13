@@ -120,21 +120,19 @@
 
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
             <div class="btn-group">
-               
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-save"></span> Guardar </button>
-                <a type="button" href="/Cliente/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+                <button type="button" class="btn btn-outline-danger ml-2" @onclick="Eliminar"><span class="bi bi-trash"></span> Eliminar </button>
             </div>
         </div>
     </div>
-
 </EditForm>
 
 @code {
     public Clientes Cliente { get; set; } = new Clientes();
     public Telefonos NuevoTelefono { get; set; } = new Telefonos();
     public List<Telefonos> ListaTelefonos { get; set; } = new List<Telefonos>();
-    public TiposTelefonos TipoTelefono { get; set; } = new TiposTelefonos(); 
+    public TiposTelefonos TipoTelefono { get; set; } = new TiposTelefonos();
     public List<TiposTelefonos> TiposTelefonos { get; set; } = new List<TiposTelefonos>();
     private bool Existe = false;
 
@@ -203,8 +201,6 @@
         }
     }
 
-
-
     public async Task Eliminar()
     {
         var eliminado = await ClienteService.Eliminar(Cliente.ClienteId);
@@ -234,8 +230,6 @@
         }
     }
 
-
-
     public void EliminarTelefono(Telefonos telefono)
     {
         if (telefono != null)
@@ -248,7 +242,6 @@
             NuevoTelefono.NumeroTelefono = telefono.NumeroTelefono;
         }
     }
-
 
     private void FormatearTelefono()
     {
