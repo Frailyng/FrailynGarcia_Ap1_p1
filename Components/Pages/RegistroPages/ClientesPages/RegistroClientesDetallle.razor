@@ -88,7 +88,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Tipo de Teléfono</th>
+                            <th>Tipo de Teléfono (ID)</th>
                             <th>Teléfono</th>
                             <th>Acciones</th>
                         </tr>
@@ -97,7 +97,7 @@
                         @foreach (var telefono in ListaTelefonos)
                         {
                             <tr>
-                                <td>@telefono.TipoTelefono</td> 
+                                <td>@telefono.TelefonoId</td>
                                 <td>@telefono.NumeroTelefono</td>
                                 <td>
                                     <button class="btn btn-danger btn-sm" @onclick="() => EliminarTelefono(telefono)">
@@ -173,12 +173,35 @@
         {
             return;
         }
+
+        // Asignar la lista de teléfonos al cliente
+        Cliente.ClientesDetalle = ListaTelefonos.Select(t => new ClientesDetalle
+            {
+                TipoId = t.TelefonoId,
+                Telefono = t.NumeroTelefono
+            }).ToList();
+
+        // Guardar el cliente
         var guardo = await ClienteService.Guardar(Cliente);
         if (guardo)
         {
+            // Guardar los teléfonos
+            foreach (var telefono in ListaTelefonos)
+            {
+                telefono.ClienteId = Cliente.ClienteId; // Asigna el ClienteId al teléfono
+                await TelefonosService.Guardar(telefono); // Suponiendo que tienes un método Guardar en el servicio de teléfonos
+            }
+
+            // Limpiar los campos
             Nuevo();
+            await JSRuntime.InvokeVoidAsync("alert", "Guardado correctamente"); // Mensaje de éxito
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "No se pudo guardar"); // Mensaje de error
         }
     }
+
 
     public async Task Eliminar()
     {
@@ -186,19 +209,18 @@
         Nuevo();
     }
 
-    public async Task AgregarTelefono()
+    public void AgregarTelefono()
     {
         // Obtener la descripción del tipo de teléfono seleccionado
-        var tipoTelefonoDescripcion = TiposTelefonos.FirstOrDefault(t => t.TipoId == TipoTelefono.TipoId)?.Descripcion;
+        var tipoTelefonoSeleccionado = TiposTelefonos.FirstOrDefault(t => t.TipoId == TipoTelefono.TipoId);
+        var tipoTelefonoDescripcion = tipoTelefonoSeleccionado?.Descripcion;
 
-        if (!string.IsNullOrWhiteSpace(tipoTelefonoDescripcion) && !string.IsNullOrWhiteSpace(NuevoTelefono.NumeroTelefono))
+        if (tipoTelefonoSeleccionado != null && !string.IsNullOrWhiteSpace(NuevoTelefono.NumeroTelefono))
         {
-            // Asignar la descripción del tipo de teléfono al nuevo teléfono
-            NuevoTelefono.TipoTelefono = tipoTelefonoDescripcion;
-
             // Agregar el nuevo teléfono a la lista que se muestra en la tabla
             ListaTelefonos.Add(new Telefonos
                 {
+                    TelefonoId = tipoTelefonoSeleccionado.TipoId,
                     TipoTelefono = tipoTelefonoDescripcion,
                     NumeroTelefono = NuevoTelefono.NumeroTelefono
                 });
@@ -209,6 +231,7 @@
         }
     }
 
+
     public void EliminarTelefono(Telefonos telefono)
     {
         if (telefono != null)
@@ -217,10 +240,11 @@
             ListaTelefonos.Remove(telefono);
 
             // Asignar los valores del teléfono eliminado a los campos de entrada
-            TipoTelefono.TipoId = TiposTelefonos.FirstOrDefault(t => t.Descripcion == telefono.TipoTelefono)?.TipoId ?? 0;
+            TipoTelefono.TipoId = telefono.TelefonoId;
             NuevoTelefono.NumeroTelefono = telefono.NumeroTelefono;
         }
     }
+
 
     private void FormatearTelefono()
     {
