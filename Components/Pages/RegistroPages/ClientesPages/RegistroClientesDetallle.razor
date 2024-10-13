@@ -97,7 +97,7 @@
                         @foreach (var telefono in ListaTelefonos)
                         {
                             <tr>
-                                <td>@telefono.TelefonoId</td>
+                                <td>@telefono.TipoTelefono</td> 
                                 <td>@telefono.NumeroTelefono</td>
                                 <td>
                                     <button class="btn btn-danger btn-sm" @onclick="() => EliminarTelefono(telefono)">
@@ -119,11 +119,14 @@
 
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
             <div class="btn-group">
+               
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-save"></span> Guardar </button>
                 <a type="button" href="/Cliente/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
             </div>
         </div>
     </div>
+
 </EditForm>
 
 @code {
@@ -185,19 +188,38 @@
 
     public async Task AgregarTelefono()
     {
-        var tipoTelefonoDescripcion = TiposTelefonos.FirstOrDefault(t => t.TipoId == NuevoTelefono.TelefonoId)?.Descripcion;
-        NuevoTelefono.TipoTelefono = tipoTelefonoDescripcion;
+        // Obtener la descripción del tipo de teléfono seleccionado
+        var tipoTelefonoDescripcion = TiposTelefonos.FirstOrDefault(t => t.TipoId == TipoTelefono.TipoId)?.Descripcion;
 
-        // Agrega el teléfono en la base de datos
-        await TelefonosService.AgregarTelefono(NuevoTelefono);
+        if (!string.IsNullOrWhiteSpace(tipoTelefonoDescripcion) && !string.IsNullOrWhiteSpace(NuevoTelefono.NumeroTelefono))
+        {
+            // Asignar la descripción del tipo de teléfono al nuevo teléfono
+            NuevoTelefono.TipoTelefono = tipoTelefonoDescripcion;
 
-        ListaTelefonos.Add(NuevoTelefono);
-        NuevoTelefono = new Telefonos(); // Limpiar el formulario
+            // Agregar el nuevo teléfono a la lista que se muestra en la tabla
+            ListaTelefonos.Add(new Telefonos
+                {
+                    TipoTelefono = tipoTelefonoDescripcion,
+                    NumeroTelefono = NuevoTelefono.NumeroTelefono
+                });
+
+            // Limpiar los campos
+            TipoTelefono = new TiposTelefonos();
+            NuevoTelefono = new Telefonos();
+        }
     }
 
     public void EliminarTelefono(Telefonos telefono)
     {
-        ListaTelefonos.Remove(telefono);
+        if (telefono != null)
+        {
+            // Remover el teléfono de la lista
+            ListaTelefonos.Remove(telefono);
+
+            // Asignar los valores del teléfono eliminado a los campos de entrada
+            TipoTelefono.TipoId = TiposTelefonos.FirstOrDefault(t => t.Descripcion == telefono.TipoTelefono)?.TipoId ?? 0;
+            NuevoTelefono.NumeroTelefono = telefono.NumeroTelefono;
+        }
     }
 
     private void FormatearTelefono()
