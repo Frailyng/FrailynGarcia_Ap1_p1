@@ -13,6 +13,20 @@
 
         <div class="card-body">
 
+            <!-- Cobro Id -->
+            <div class="mb-3">
+                <label for="CobroId" class="form-label">Cobro Id:</label>
+                <InputNumber @bind-Value="Cobro.CobroId" class="form-control" />
+                <ValidationMessage For="@(() => Cobro.CobroId)" />
+            </div>
+
+            <!-- Fecha -->
+            <div class="mb-3">
+                <label for="Fecha" class="form-label">Fecha:</label>
+                <InputDate @bind-Value="Cobro.Fecha" class="form-control" />
+                <ValidationMessage For="@(() => Cobro.Fecha)" />
+            </div>
+
             <!-- Deudor (Cargar desde Deudores) -->
             <div class="mb-3">
                 <label for="DeudorId" class="form-label">Deudor:</label>
@@ -82,6 +96,7 @@
                     </tbody>
                 </table>
             }
+
         </div>
     </div>
 
@@ -148,7 +163,6 @@
         }
     }
 
-    // Método para agregar un detalle de cobro
     public void AgregarDetalle()
     {
         if (PrestamoSeleccionado != null && PrestamoSeleccionado.Montos > 0)
@@ -157,8 +171,12 @@
                 {
                     CobroId = Cobro.DeudorId,
                     PrestamoId = PrestamoSeleccionado.PrestamosId,
-                    MontoPagado = PrestamoSeleccionado.Montos
+                    MontoPagado = PrestamoSeleccionado.Montos,
+                    DeudorId = Cobro.DeudorId // Agregar el DeudorId aquí
                 });
+
+            // Sumar el monto al campo Monto del Cobro
+            Cobro.Monto += PrestamoSeleccionado.Montos;
 
             // Limpiar la selección de préstamo
             PrestamoSeleccionado = new Prestamos();
@@ -169,18 +187,22 @@
     public void RemoverDetalle(CobrosDetalle detalle)
     {
         DetallesCobro.Remove(detalle);
+        // Restar el monto del cobro si se remueve un detalle
+        Cobro.Monto -= detalle.MontoPagado;
     }
 
     // Método para guardar el cobro
     public async Task Guardar()
     {
-        Cobro.Detalles = DetallesCobro; // Asignar detalles de cobro
+        // Asignar detalles de cobro
+        Cobro.Detalles = DetallesCobro;
 
+        // Intentar guardar el cobro
         bool guardo = await CobroService.Guardar(Cobro);
         if (guardo)
         {
-            Nuevo(); // Limpiar el formulario después de guardar
+            // Limpiar el formulario después de guardar
+            Nuevo();
         }
     }
 }
-
