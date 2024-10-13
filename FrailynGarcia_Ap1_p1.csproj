@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\Pages\RegistroPages\CobroDetallesPages\**" />
+    <Content Remove="Components\Pages\RegistroPages\CobroDetallesPages\**" />
+    <EmbeddedResource Remove="Components\Pages\RegistroPages\CobroDetallesPages\**" />
+    <None Remove="Components\Pages\RegistroPages\CobroDetallesPages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -15,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Pages\RegistroPages\CobroDetallesPages\" />
     <Folder Include="DATA\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
