@@ -4,21 +4,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FrailynGarcia_Ap1_p1.Models
 {
-    public class Prestamos
+    public partial class Prestamos
     {
         [Key]
         public int PrestamosId { get; set; }
-        [Required(ErrorMessage ="El campo Deudores no puede estar en blanco")]
+        [Required(ErrorMessage = "El campo Deudores no puede estar en blanco")]
 
-        [ForeignKey("Deudor")]
-        public int DeudorId { get; set; }
+        public string Conceptos { get; set; } = null!;
 
-        public string? Deudores { get; set; }
-        public string? Conceptos { get; set; }
-        public int Montos { get; set; }
+        [Range(1, double.MaxValue, ErrorMessage = "El valor no puede ser inferior a 1.")]
+        public double Montos { get; set; }
 
-        public int Balance { get; set; }
+        public double Balance { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Debe escoger un deudor valido.")]
+        public int DeudorId {  get; set; }
+
+        [ForeignKey("DeudorId")]
         public Deudores Deudor { get; set; }
 
     }
