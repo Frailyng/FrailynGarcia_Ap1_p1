@@ -25,39 +25,50 @@ public class CobrosService(Contexto contexto)
         foreach (var item in detalle)
         {
             var prestamo = await contexto.Prestamos.SingleAsync(p => p.PrestamoId == item.PrestamoId);
+            prestamo.Balance -= item.ValorCobrado;
         }
     }
 
-    //Existe
-    public async Task<bool> Existe(int cobroid)
+    public async Task<bool> Modificar(Cobros cobro)
     {
-        return await _context.Cobros
-            .AnyAsync(r => r.CobroId == cobroid);
+        contexto.Update(cobro);
+        return await contexto.SaveChangesAsync() > 0;
+           
     }
 
-    //Eliminar
-    public async Task<bool> Eliminar(int cobroid)
+    public async Task<bool> Guardar(Cobros cobro)
     {
-        var cobros = await _context.Cobros
-        .Where(r => r.CobroId == cobroid)
-        .ExecuteDeleteAsync();
-        return cobros > 0;
+        if (!await Existe(cobro.CobroId))
+        {
+            return await Insertar(cobro);
+        }
+        else
+        {
+            return await Modificar(cobro);
+        }
     }
 
     //Buscar
-    public async Task<Cobros?> Buscar(int id)
+    public async Task<Cobros> Buscar(int cobroid)
     {
-        return await _context.Cobros
-            .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.CobroId == id);
+        return await contexto.Cobros.Include(d => d.Deudor)
+            .Include(d => d.CobrosDetalle)
+            .FirstOrDefaultAsync(r => r.CobroId == cobroid);
     }
 
+    public async Task<bool> ELiminar(int CobroId)
+    {
+        return await contexto.Cobros.Include(c => c.CobrosDetalle)
+            .Where(c => c.CobroId ==  CobroId)
+            .ExecuteDeleteAsync() > 0;
+    }
     // Listar
     public async Task<List<Cobros>> Listar(Expression<Func<Cobros, bool>> criterio)
     {
-        return await _context.Cobros
-            .AsNoTracking()
+        return await contexto.Cobros.Include(d => d.Deudor)
+            .Include(d => d.CobrosDetalle)
             .Where(criterio)
+             .AsNoTracking()
             .ToListAsync();
     }
 }
