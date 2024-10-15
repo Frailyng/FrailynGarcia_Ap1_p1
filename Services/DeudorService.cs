@@ -1,21 +1,18 @@
 ﻿using FrailynGarcia_Ap1_p1.DAL;
 using FrailynGarcia_Ap1_p1.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FrailynGarcia_Ap1_p1.Services;
 
-public class DeudorService
+public partial class DeudorService(Contexto contexto)
 {
-    private readonly Contexto _context;
-
-    public DeudorService(Contexto contexto)
+    public async Task <List<Deudores>> Listar(Expression<Func<Deudores, bool>> criterio)
     {
-        _context = contexto;
-    }
-
-    public async Task <List<Deudores>> ObtenerEntidadesAsync()
-    {
-        return await _context.Deudores.ToListAsync();
+        return await contexto.Deudores
+            .Where(criterio)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
 }
