@@ -11,9 +11,9 @@ namespace FrailynGarcia_Ap1_p1.Models
 
         public int CobroId { get; set; }
 
-        public int DeudorId { get; set; }
+        public int PrestamoId { get; set; }
 
-        public int MontoPagado { get; set; }
+        public int ValorCobrado { get; set; }
 
         [ForeignKey("CobroId")]
         public virtual Cobros Cobro { get; set; } = null!;
