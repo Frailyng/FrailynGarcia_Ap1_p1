@@ -9,15 +9,16 @@ public class Cobros
     public int CobroId { get; set; }
 
     [Required(ErrorMessage = "La fecha no puede estar en blanco")]
-    public DateOnly? Fecha { get; set; }
+    public DateTime Fecha { get; set; }
 
-    [ForeignKey("Deudor")]
     public int DeudorId { get; set; }
 
-    public int Monto { get; set; }
+    [Range(1, double.MaxValue, ErrorMessage = "El monto no es valido")]
 
-    public Deudores Deudor { get; set; }
+    public double Monto { get; set; }
 
-    // Agregar una colección para los detalles del cobro
     public ICollection<CobrosDetalle> Detalles { get; set; } = new List<CobrosDetalle>();
+
+    [ForeignKey("DeudorId")]
+    public virtual Deudores Deudor { get; set; }
 }
