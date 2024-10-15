@@ -9,13 +9,13 @@ namespace FrailynGarcia_Ap1_p1.DAL
         public Contexto(DbContextOptions<Contexto> options) : base(options)
         {
         }
-        public DbSet<Prestamos> Prestamos { get; set; }
 
-        public DbSet<Deudores> Deudores { get; set; }
+        public virtual DbSet<Deudores> Deudores { get; set; }
+        public virtual DbSet<Prestamos> Prestamos { get; set; }
 
-        public DbSet<Cobros> Cobros { get; set; }
+        public virtual DbSet<Cobros> Cobros { get; set; }
 
-        public DbSet<CobrosDetalle> CobroDetalle { get; set; }
+        public virtual DbSet<CobrosDetalle> CobrosDetalle { get; set; }
 
         public DbSet<Clientes> Clientes { get; set; }
 

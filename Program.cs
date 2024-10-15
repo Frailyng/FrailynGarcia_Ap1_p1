@@ -14,7 +14,7 @@ builder.Services.AddDbContext<Contexto>( options => options.UseSqlite(ConStr));
 
 builder.Services.AddScoped<PrestamoService>();
 builder.Services.AddScoped<DeudorService>();
-builder.Services.AddScoped<CobroService>();
+builder.Services.AddScoped<CobrosService>();
 builder.Services.AddScoped<CobroDetalleService>();
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<TiposTelefonoService>();

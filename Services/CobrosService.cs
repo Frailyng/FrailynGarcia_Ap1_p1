@@ -5,27 +5,19 @@ using System.Linq.Expressions;
 
 namespace FrailynGarcia_Ap1_p1.Services;
 
-public class CobroService
+public class CobrosService(Contexto contexto)
 {
-    private readonly Contexto _context;
 
-    public CobroService(Contexto contexto)
+    public async Task<bool> Existe(int cobroId)
     {
-        _context = contexto;
-    }
-
-    public async Task<bool> Guardar(Cobros cobro)
-    {
-        if (!await Existe(cobro.CobroId))
-            return await Insertar(cobro);
-        else
-            return await Modificar(cobro);
+            return await contexto.Cobros.AnyAsync(c => c.CobroId == cobroId);
     }
 
     public async Task<bool> Insertar(Cobros cobro)
     {
-        _context.Cobros.Add(cobro);
-        return await _context.SaveChangesAsync() > 0;
+        contexto.Cobros.Add(cobro);
+        await AfectarPrestamos(cobro.CobrosDetalle.ToArray());
+        return await contexto.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> Modificar(Cobros cobro)
