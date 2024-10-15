@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FrailynGarcia_Ap1_p1.Models
 {
-    public class CobrosDetalle
+    public partial class CobrosDetalle
     {
         [Key]
         public int DetalleId { get; set; }
