@@ -13,7 +13,7 @@ namespace FrailynGarcia_Ap1_p1.Models
         public string Conceptos { get; set; } = null!;
 
         [Range(1, double.MaxValue, ErrorMessage = "El valor no puede ser inferior a 1.")]
-        public double Montos { get; set; }
+        public double Monto { get; set; }
 
         public double Balance { get; set; }
 

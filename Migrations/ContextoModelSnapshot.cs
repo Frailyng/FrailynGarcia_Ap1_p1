@@ -168,7 +168,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.Property<string>("Deudores")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Montos")
+                    b.Property<int>("Monto")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("PrestamoId");

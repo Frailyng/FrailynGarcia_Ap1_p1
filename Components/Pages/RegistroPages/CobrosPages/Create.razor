@@ -56,8 +56,8 @@
             <!-- Monto -->
             <div class="mb-3">
                 <label for="Monto" class="form-label">Monto a Pagar:</label>
-                <InputNumber @bind-Value="PrestamoSeleccionado.Montos" class="form-control" />
-                <ValidationMessage For="@(() => PrestamoSeleccionado.Montos)" />
+                <InputNumber @bind-Value="PrestamoSeleccionado.Monto" class="form-control" />
+                <ValidationMessage For="@(() => PrestamoSeleccionado.Monto)" />
             </div>
 
             <!-- Botón para agregar al detalle -->
@@ -165,18 +165,18 @@
 
     public void AgregarDetalle()
     {
-        if (PrestamoSeleccionado != null && PrestamoSeleccionado.Montos > 0)
+        if (PrestamoSeleccionado != null && PrestamoSeleccionado.Monto > 0)
         {
             DetallesCobro.Add(new CobrosDetalle
                 {
                     CobroId = Cobro.DeudorId,
                     PrestamoId = PrestamoSeleccionado.PrestamoId,
-                    MontoPagado = PrestamoSeleccionado.Montos,
+                    MontoPagado = PrestamoSeleccionado.Monto,
                     DeudorId = Cobro.DeudorId // Agregar el DeudorId aquí
                 });
 
             // Sumar el monto al campo Monto del Cobro
-            Cobro.Monto += PrestamoSeleccionado.Montos;
+            Cobro.Monto += PrestamoSeleccionado.Monto;
 
             // Limpiar la selección de préstamo
             PrestamoSeleccionado = new Prestamos();

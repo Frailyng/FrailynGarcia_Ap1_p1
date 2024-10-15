@@ -32,7 +32,7 @@ public class PrestamoService(Contexto contexto)
 
     public async Task<bool> Guardar(Prestamos prestamo)
     {
-        prestamo.Balance = prestamo.Montos;
+        prestamo.Balance = prestamo.Monto;
         if (!await Existe(prestamo.PrestamoId))
         {
             return await Insertar(prestamo);
