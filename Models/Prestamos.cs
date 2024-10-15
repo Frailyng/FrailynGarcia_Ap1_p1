@@ -21,7 +21,7 @@ namespace FrailynGarcia_Ap1_p1.Models
         public int DeudorId {  get; set; }
 
         [ForeignKey("DeudorId")]
-        public Deudores Deudor { get; set; }
+        public virtual Deudores Deudor { get; set; } = null!;
 
     }
 }
