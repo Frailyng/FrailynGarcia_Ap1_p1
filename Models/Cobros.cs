@@ -17,7 +17,7 @@ public class Cobros
 
     public double Monto { get; set; }
 
-    public ICollection<CobrosDetalle> Detalles { get; set; } = new List<CobrosDetalle>();
+    public ICollection<CobrosDetalle> CobrosDetalle { get; set; } = new List<CobrosDetalle>();
 
     [ForeignKey("DeudorId")]
     public virtual Deudores Deudor { get; set; }

@@ -7,7 +7,7 @@ namespace FrailynGarcia_Ap1_p1.Models
     public partial class Prestamos
     {
         [Key]
-        public int PrestamosId { get; set; }
+        public int PrestamoId { get; set; }
         [Required(ErrorMessage = "El campo Deudores no puede estar en blanco")]
 
         public string Conceptos { get; set; } = null!;

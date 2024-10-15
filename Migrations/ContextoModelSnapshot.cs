@@ -152,7 +152,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
 
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Prestamos", b =>
                 {
-                    b.Property<int>("PrestamosId")
+                    b.Property<int>("PrestamoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -171,7 +171,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                     b.Property<int>("Montos")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("PrestamosId");
+                    b.HasKey("PrestamoId");
 
                     b.HasIndex("DeudorId");
 

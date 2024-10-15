@@ -54,15 +54,15 @@
                         foreach (var registro in ListaPrestamos)
                         {
                             <tr>
-                                <td class="text-center">@registro.PrestamosId</td>
+                                <td class="text-center">@registro.PrestamoId</td>
                                 <td class="text-center">@registro.Deudores</td>
                                 <td class="text-center">@registro.Conceptos</td>
                                 <td class="text-center">@registro.Montos</td>
                                 <td class="text-center">
-                                    <a href="/Prestamo/Edit/@registro.PrestamosId" class="btn bi bi-pencil-square"></a>
+                                    <a href="/Prestamo/Edit/@registro.PrestamoId" class="btn bi bi-pencil-square"></a>
                                 </td>
                                 <td class="text-center">
-                                    <a href="/Prestamo/Delete/@registro.PrestamosId" class="btn bi bi-trash"></a>
+                                    <a href="/Prestamo/Delete/@registro.PrestamoId" class="btn bi bi-trash"></a>
                                 </td>
                             </tr>
                         }
@@ -103,7 +103,7 @@
         {
             if (Filtro == "prestamoid" && int.TryParse(valorFiltro, out int prestamoid))
             {
-                ListaPrestamos = await PrestamoService.Listar(p => p.PrestamosId == prestamoid);
+                ListaPrestamos = await PrestamoService.Listar(p => p.PrestamoId == prestamoid);
             }
             else if (Filtro == "deudores")
             {

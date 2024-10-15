@@ -18,7 +18,7 @@
                     <label for="PrestamosId" class="form-label">PrestamosId:</label>
                     <div class="input-group">
                         <div style="width: 40%; height: 1em;">
-                            <InputNumber @bind-Value="Prestamo.PrestamosId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                            <InputNumber @bind-Value="Prestamo.PrestamoId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
                         </div>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
     public async Task Buscar()
     {
         Existe = false;
-        var PrestamoEcontrado = await PrestamoService.Buscar(Prestamo.PrestamosId);
+        var PrestamoEcontrado = await PrestamoService.Buscar(Prestamo.PrestamoId);
         if (PrestamoEcontrado != null)
         {
             Prestamo = PrestamoEcontrado;
@@ -99,7 +99,7 @@
     public async Task<bool> Validar()
     {
 
-        Existe = await PrestamoService.Existe(Prestamo.PrestamosId);
+        Existe = await PrestamoService.Existe(Prestamo.PrestamoId);
         return !Existe;
     }
 
@@ -125,7 +125,7 @@
 
     public async Task Eliminar()
     {
-        var eliminado = await PrestamoService.Eliminar(Prestamo.PrestamosId);
+        var eliminado = await PrestamoService.Eliminar(Prestamo.PrestamoId);
         Nuevo();
     }
 

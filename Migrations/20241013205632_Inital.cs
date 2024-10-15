@@ -171,7 +171,7 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                         name: "FK_CobroDetalle_Prestamos_PrestamoId",
                         column: x => x.PrestamoId,
                         principalTable: "Prestamos",
-                        principalColumn: "PrestamosId",
+                        principalColumn: "PrestamoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 

@@ -19,7 +19,7 @@ public class PrestamoService
     public async Task<bool> Guardar(Prestamos prestamo)
     {
         prestamo.Balance = prestamo.Montos;
-        if (!await Existe(prestamo.PrestamosId))
+        if (!await Existe(prestamo.PrestamoId))
             return await Insertar(prestamo);
         else
             return await Modificar(prestamo);
@@ -43,7 +43,7 @@ public class PrestamoService
     public async Task<bool> Existe(int prestamoid)
     {
         return await _context.Prestamos
-            .AnyAsync(r => r.PrestamosId == prestamoid);
+            .AnyAsync(r => r.PrestamoId == prestamoid);
     }
 
     //Existe 2
@@ -57,14 +57,14 @@ public class PrestamoService
     public async Task<bool> Existe(int prestamoid, string? Deudores)
     {
         return await _context.Prestamos
-            .AnyAsync(r => r.PrestamosId != prestamoid && r.Deudores.Equals(Deudores));
+            .AnyAsync(r => r.PrestamoId != prestamoid && r.Deudores.Equals(Deudores));
     }
 
     //Eliminar
     public async Task<bool> Eliminar(int prestamoid)
     {
         var registros = await _context.Prestamos
-        .Where(r => r.PrestamosId == prestamoid)
+        .Where(r => r.PrestamoId == prestamoid)
         .ExecuteDeleteAsync();
         return registros > 0;
     }
@@ -74,7 +74,7 @@ public class PrestamoService
     {
         return await _context.Prestamos
             .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.PrestamosId == id);
+            .FirstOrDefaultAsync(r => r.PrestamoId == id);
     }
 
     // Listar

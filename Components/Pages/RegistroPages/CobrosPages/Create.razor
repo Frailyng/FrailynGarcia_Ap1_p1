@@ -44,11 +44,11 @@
             <!-- Selección de Préstamo -->
             <div class="mb-3">
                 <label for="PrestamoId" class="form-label">Préstamo:</label>
-                <InputSelect @bind-Value="PrestamoSeleccionado.PrestamosId" class="form-control">
+                <InputSelect @bind-Value="PrestamoSeleccionado.PrestamoId" class="form-control">
                     <option value="">Seleccione un Préstamo</option>
                     @foreach (var prestamo in ListaPrestamosDeudor)
                     {
-                        <option value="@prestamo.PrestamosId">Préstamo: @prestamo.PrestamosId - Balance: @prestamo.Balance</option>
+                        <option value="@prestamo.PrestamoId">Préstamo: @prestamo.PrestamoId - Balance: @prestamo.Balance</option>
                     }
                 </InputSelect>
             </div>
@@ -170,7 +170,7 @@
             DetallesCobro.Add(new CobrosDetalle
                 {
                     CobroId = Cobro.DeudorId,
-                    PrestamoId = PrestamoSeleccionado.PrestamosId,
+                    PrestamoId = PrestamoSeleccionado.PrestamoId,
                     MontoPagado = PrestamoSeleccionado.Montos,
                     DeudorId = Cobro.DeudorId // Agregar el DeudorId aquí
                 });

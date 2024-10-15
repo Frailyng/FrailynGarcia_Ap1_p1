@@ -20,10 +20,12 @@ public class CobrosService(Contexto contexto)
         return await contexto.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> Modificar(Cobros cobro)
+    public async Task AfectarPrestamos(CobrosDetalle[] detalle)
     {
-        _context.Update(cobro);
-        return await _context.SaveChangesAsync() > 0;
+        foreach (var item in detalle)
+        {
+            var prestamo = await contexto.Prestamos.SingleAsync(p => p.PrestamoId == item.PrestamoId);
+        }
     }
 
     //Existe
