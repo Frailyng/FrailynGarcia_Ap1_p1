@@ -1,95 +1,79 @@
 ﻿using FrailynGarcia_Ap1_p1.DAL;
 using FrailynGarcia_Ap1_p1.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using SQLitePCL;
 using System.Linq.Expressions;
 
 namespace FrailynGarcia_Ap1_p1.Services;
 
-public class PrestamoService
+public class PrestamoService(Contexto contexto)
 {
-    private readonly Contexto _context;
 
-    public PrestamoService(Contexto contexto)
+    public async Task<bool> Existe(int prestamoId)
     {
-        _context = contexto;
-    }
-
-    //Guardar
-    public async Task<bool> Guardar(Prestamos prestamo)
-    {
-        prestamo.Balance = prestamo.Montos;
-        if (!await Existe(prestamo.PrestamoId))
-            return await Insertar(prestamo);
-        else
-            return await Modificar(prestamo);
+            return await contexto.Prestamos
+            .AnyAsync(p => p.PrestamoId == prestamoId);
     }
 
     //Insertar
     public async Task<bool> Insertar(Prestamos prestamo)
     {
-        _context.Prestamos.Add(prestamo);
-        return await _context.SaveChangesAsync() > 0;
+        contexto.Prestamos.Add(prestamo);
+        return await contexto.SaveChangesAsync() > 0;
     }
 
     //Modificar 
     public async Task<bool> Modificar(Prestamos prestamo)
     {
-        _context.Update(prestamo);
-        return await _context.SaveChangesAsync() > 0;
+        contexto.Update(prestamo);
+        return await contexto.SaveChangesAsync() > 0;
     }
 
-    //Existe
-    public async Task<bool> Existe(int prestamoid)
+    public async Task<bool> Guardar(Prestamos prestamo)
     {
-        return await _context.Prestamos
-            .AnyAsync(r => r.PrestamoId == prestamoid);
+        prestamo.Balance = prestamo.Montos;
+        if (!await Existe(prestamo.PrestamoId))
+        {
+            return await Insertar(prestamo);
+        }
+        else
+        {
+            return await Modificar(prestamo);
+        }
     }
 
-    //Existe 2
-    public async Task<bool> Existe(string? deudores, int? id = null)
+    //Buscar
+    public async Task<Prestamos> Buscar(int prestamoid)
     {
-        return await _context.Prestamos
-            .AnyAsync(r => r.Deudores.Equals(deudores));
-    }
-
-    //Existe 3
-    public async Task<bool> Existe(int prestamoid, string? Deudores)
-    {
-        return await _context.Prestamos
-            .AnyAsync(r => r.PrestamoId != prestamoid && r.Deudores.Equals(Deudores));
+        return await contexto.Prestamos.Include(d => d.Deudor)
+            .FirstOrDefaultAsync(p => p.PrestamoId == prestamoid);
     }
 
     //Eliminar
     public async Task<bool> Eliminar(int prestamoid)
     {
-        var registros = await _context.Prestamos
-        .Where(r => r.PrestamoId == prestamoid)
-        .ExecuteDeleteAsync();
-        return registros > 0;
-    }
-
-    //Buscar
-    public async Task<Prestamos?> Buscar (int id)
-    {
-        return await _context.Prestamos
-            .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.PrestamoId == id);
+        return await contexto.Prestamos
+        .Where(p => p.PrestamoId == prestamoid)
+        .ExecuteDeleteAsync() > 0;
+        
     }
 
     // Listar
-    public async Task<List<Prestamos>> Listar (Expression<Func<Prestamos, bool>> criterio)
+    public async Task<List<Prestamos>> GetList(Expression<Func<Prestamos, bool>> criterio)
     {
-        return await _context.Prestamos
-            .AsNoTracking()
+        return await contexto.Prestamos
+            .Include(d => d.Deudor)
             .Where(criterio)
+            .AsNoTracking()
             .ToListAsync();
     }
 
-    public async Task<List<Prestamos>> ObtenerPrestamosPorDeudor(int deudorId)
+    public async Task<List<Prestamos>> GetPrestamosPendientes(int deudorId)
     {
-        return await _context.Prestamos
-            .Where(p => p.DeudorId == deudorId)
+        return await contexto.Prestamos
+            .Where(p => p.DeudorId == deudorId && p.Balance > 0)
+            .AsNoTracking()
             .ToListAsync();
     }
 
