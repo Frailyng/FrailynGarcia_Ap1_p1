@@ -15,10 +15,6 @@ builder.Services.AddDbContext<Contexto>( options => options.UseSqlite(ConStr));
 builder.Services.AddScoped<PrestamoService>();
 builder.Services.AddScoped<DeudorService>();
 builder.Services.AddScoped<CobrosService>();
-builder.Services.AddScoped<ClienteService>();
-builder.Services.AddScoped<TiposTelefonoService>();
-builder.Services.AddScoped<TelefonosService>();
-
 
 var app = builder.Build();
 
