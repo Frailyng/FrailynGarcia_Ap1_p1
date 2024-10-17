@@ -1,12 +1,19 @@
-﻿@page "/Prestamo/Edit/{Id:int}"
+﻿@page "/Prestamo/Edit/{PrestamoId:int}"
+@using Microsoft.EntityFrameworkCore
+
+
 @inject PrestamoService PrestamoService
+@inject DeudorService deudorService
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
 
-
-<EditForm Model="Prestamo" OnValidSubmit="Guardar">
+<PageTitle>Modificar</PageTitle>
+<EditForm Model="Prestamo" OnValidSubmit="Modificar">
     <DataAnnotationsValidator />
+    <ValidationSummary />
 
+    <div class="container">
     <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
         <div class="card-header bg-primary text-white" style="text-align: center;">
             <h3> <i class="fas fa-clipboard-list"></i> Editar Prestamos</h3>
@@ -14,100 +21,69 @@
 
         <div class="card-body">
 
-            <div class="row">
-
-                <div class="col-md-6 mb-3">
-                    <label for="Id" class="form-label">PrestamoId:</label>
-                    <div class="input-group">
-                        <div style="width: 40%; height: 1em;">
-                            <InputNumber @bind-Value="Prestamo.PrestamoId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
-                        </div>
-                    </div>
+                @*Deudor*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Deudor</strong></label>
+                    <InputSelect class="form-control" @bind-Value="Prestamo.DeudorId">
+                        <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        @foreach (var deudor in ListaDeudores)
+                        {
+                            <option value="@deudor.DeudorId">@deudor.Nombres</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="(() => Prestamo.Deudor)" />
+                </div>
+                @*Concepto*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Concepto</strong></label>
+                    <InputText class="form-control" @bind-Value="Prestamo.Conceptos"></InputText>
+                    <ValidationMessage For="(() => Prestamo.Conceptos)" />
+                </div>
+                @*Monto*@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Monto</strong></label>
+                    <InputNumber class="form-control" @bind-Value="Prestamo.Monto"></InputNumber>
+                    <ValidationMessage For="(() => Prestamo.Monto)" />
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="Deudores" class="form-label">Deudores:</label>
-                <InputText @bind-Value="Prestamo.Deudores" class="form-control" />
-                <ValidationMessage For="@(() => Prestamo.Deudores)" />
-            </div>
-
-            <div class="mb-3">
-                <label for="Conceptos" class="form-label">Deudores:</label>
-                <InputText @bind-Value="Prestamo.Conceptos" class="form-control" />
-                <ValidationMessage For="@(() => Prestamo.Conceptos)" />
-            </div>
-
-            <div class="mb-3">
-                <label for="Montos" class="form-label">Montos:</label>
-                <InputNumber @bind-Value="Prestamo.Monto" class="form-control" />
-                <ValidationMessage For="@(() => Prestamo.Monto)" />
-            </div>
-        </div>
-
-        <div class="card-footer bg-light d-flex justify-content-center mt-3">
-            <div class="btn-group">
-                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
-                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-floppy mt-3"></span> Guardar </button>
-                <a type="button" href="/Prestamo/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+            @*footer*@
+            <div class="card-footer text-center mt-2">
+                <a href="/Prestamo/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"></span> Volver</a>
+                <button type="submit" class="btn btn-primary bi bi-floppy" @onclick="Modificar"> Modificar</button>
             </div>
         </div>
     </div>
 </EditForm>
 
+@Mensaje
 
 @code {
     [Parameter]
-    public int? Id { get; set; }
+    public int PrestamoId { get; set; }
+
     public Prestamos Prestamo { get; set; } = new Prestamos();
-    private bool Existe = false;
+    public string Mensaje { get; set; } = string.Empty;
+    public List<Deudores> ListaDeudores { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
-        if (Id.HasValue)
+        Prestamo = await PrestamoService.Buscar(PrestamoId);
+        ListaDeudores = await deudorService.Listar(d => d.DeudorId > 0);
+    }
+
+    public async Task Modificar()
+    {
+        var creado = await PrestamoService.Guardar(Prestamo);
+
+        if (creado)
         {
-            Prestamo.PrestamoId = Id.Value;
-            await Buscar();
+            Mensaje = "Modificado correctamente";
         }
-    }
-
-    public void Nuevo()
-    {
-        Prestamo = new Prestamos();
-        Existe = false;
-    }
-
-    public async Task Buscar()
-    {
-        var PrestamoEncontrado = await PrestamoService.Buscar(Prestamo.PrestamoId);
-        if (PrestamoEncontrado != null)
+        else
         {
-            Prestamo = PrestamoEncontrado;
+            Mensaje = "No se ha Modificado correctamente";
         }
-    }
-
-    public async Task<bool> Validar()
-    {
-        Existe = await PrestamoService.Existe(Prestamo.Deudores);
-        return !Existe;
-    }
-
-    public async Task Guardar()
-    {
-        if (!await Validar())
-        {
-            return;
-        }
-        var guardo = await PrestamoService.Guardar(Prestamo);
-        if(guardo)
-        {
-            Nuevo();
-        }
-    }
-
-    public async Task Eliminar()
-    {
-        var eliminado = await PrestamoService.Eliminar(Prestamo.PrestamoId);
-        Nuevo();
     }
     }
