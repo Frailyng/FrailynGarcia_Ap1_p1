@@ -77,5 +77,12 @@ public class PrestamoService(Contexto contexto)
             .ToListAsync();
     }
 
+    public async Task<Prestamos?> BuscarPrestamo(int id)
+    {
+        return await contexto.Prestamos
+            .Include(d => d.Deudor)
+            .FirstOrDefaultAsync(p => p.DeudorId == id);
+    }
+
 
 }
