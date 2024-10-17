@@ -5,7 +5,7 @@
         <option value="0">-- Seleccione un préstamo --</option>
         @foreach (var prestamo in Prestamos)
         {
-            <option value="@prestamo.PrestamoId">@prestamo.PrestamoId - @prestamo.Concepto ($@prestamo.Balance.ToString("N2"))</option>
+            <option value="@prestamo.PrestamoId">@prestamo.PrestamoId - @prestamo.Conceptos ($@prestamo.Balance.ToString("N2"))</option>
         }
     </InputSelect>
     <label class="col-form-label input-group-text">Valor:</label>
@@ -22,11 +22,12 @@
 
 
 @code {
+
     [Parameter]
     public List<Prestamos> Prestamos { get; set; } = [];
 
     [Parameter]
-    public EventCallback<(Prestamos Prestamos, double Quantity)> OnPrestamosSelected { get; set; }
+    public EventCallback<(Prestamos Prestamo, double Quantity)> OnPrestamoSelected { get; set; } // Event for  selection
 
     [Parameter]
     public int PrestamoId { get; set; }
@@ -48,7 +49,7 @@
                 ErrorMessage = "No es posible cobrar un valor mayor a la deuda";
                 return;
             }
-            await OnPrestamosSelected.InvokeAsync((prestamoSeleccionado, Valor));
+            await OnPrestamoSelected.InvokeAsync((prestamoSeleccionado, Valor));
         }
     }
 }
