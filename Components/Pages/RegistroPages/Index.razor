@@ -1,8 +1,9 @@
 ﻿@page "/Prestamo/Index"
 @inject PrestamoService PrestamoService
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<PageTitle></PageTitle>
+<PageTitle>Registro de Prestamos</PageTitle>
 <div class="Container">
     <div class="card shadow-lg">
         <div class="card-header">
@@ -55,7 +56,7 @@
                         {
                             <tr>
                                 <td class="text-center">@registro.PrestamoId</td>
-                                <td class="text-center">@registro.Deudores</td>
+                                <td class="text-center">@registro.Deudor.Nombres</td>
                                 <td class="text-center">@registro.Conceptos</td>
                                 <td class="text-center">@registro.Monto</td>
                                 <td class="text-center">
@@ -76,48 +77,49 @@
                 </tbody>
             </table>
         </div>
+        <div class="card-footer space-between">
+            <label>Cantidad:  @ListaPrestamos.Count()</label>
+            <label>Total:  @ListaPrestamos.Sum(p => p.Monto)</label>
+        </div>
     </div>
 </div>
 
 
 @code {
-    public Prestamos Prestamo = new Prestamos();
+
     public List<Prestamos> ListaPrestamos = new List<Prestamos>();
 
-    private string Filtro = "prestamoid";
-    private string valorFiltro = "";
+    private string Filtro { get; set; } = string.Empty;
+    private string valorFiltro { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        ListaPrestamos = await PrestamoService.Listar(p => true);
-    }
-
-    public async Task Guardar()
-    {
-        var guardo = await PrestamoService.Guardar(Prestamo);
+        ListaPrestamos = await PrestamoService.GetList(p => p.PrestamoId > 0);
     }
 
     public async Task Buscar()
     {
         if (valorFiltro.Trim() != "")
         {
-            if (Filtro == "prestamoid" && int.TryParse(valorFiltro, out int prestamoid))
+            if (Filtro == "deudores")
             {
-                ListaPrestamos = await PrestamoService.Listar(p => p.PrestamoId == prestamoid);
-            }
-            else if (Filtro == "deudores")
-            {
-                ListaPrestamos = await PrestamoService.Listar(p => p.Deudores == valorFiltro);
+                ListaPrestamos = await PrestamoService.GetList(p => p.Deudor.Nombres.ToLower().Contains(valorFiltro.ToLower()));
             }
             else if (Filtro == "conceptos")
             {
-                ListaPrestamos = await PrestamoService.Listar(p => p.Conceptos == valorFiltro);
-            }            
+                ListaPrestamos = await PrestamoService.GetList(p => p.Conceptos.ToLower().Contains(valorFiltro.ToLower()));
+            }
         }
         else
         {
-            ListaPrestamos = await PrestamoService.Listar(p => true);
+            ListaPrestamos = await PrestamoService.GetList(p => p.PrestamoId > 0);
         }
-       
     }
-}
+        private async Task Restablecer()
+        {
+            ListaPrestamos = await PrestamoService.GetList(p => p.PrestamoId > 0);
+            Filtro = string.Empty;
+            valorFiltro = string.Empty;
+        }
+
+    }
