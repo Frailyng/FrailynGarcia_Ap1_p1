@@ -2,10 +2,14 @@
 @inject CobrosService CobroService
 @inject DeudorService DeudorService
 @inject PrestamoService PrestamoService
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
+<PageTitle>Create</PageTitle>
 <EditForm Model="Cobro" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
+
+    <div class="container"
     <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
         <div class="card-header bg-primary text-white" style="text-align: center;">
             <h3> <i class="fas fa-clipboard-list"></i> Cobro</h3>
@@ -15,194 +19,133 @@
 
             <!-- Cobro Id -->
             <div class="mb-3">
-                <label for="CobroId" class="form-label">Cobro Id:</label>
-                <InputNumber @bind-Value="Cobro.CobroId" class="form-control" />
-                <ValidationMessage For="@(() => Cobro.CobroId)" />
+                <label for="CobroId" class="form-label"><strong>CobroId:</strong></label>
+                <InputNumber @bind-Value="Cobro.CobroId" class="form-control" readonly> </InputNumber>
             </div>
 
             <!-- Fecha -->
             <div class="mb-3">
-                <label for="Fecha" class="form-label">Fecha:</label>
-                <InputDate @bind-Value="Cobro.Fecha" class="form-control" />
-                <ValidationMessage For="@(() => Cobro.Fecha)" />
+                <label for="Fecha" class="form-label"><strong>Fecha:</strong></label>
+                <InputDate @bind-Value="Cobro.Fecha" class="form-control"> </InputDate>
             </div>
 
-            <!-- Deudor (Cargar desde Deudores) -->
+            <!-- Deudor -->
             <div class="mb-3">
-                <label for="DeudorId" class="form-label">Deudor:</label>
-                <InputSelect @bind-Value="Cobro.DeudorId" class="form-control" @onchange="CargarPrestamosDeudor">
-                    <option value="">Seleccione un Deudor</option>
+                <label for="DeudorId" class="form-label"><strong>Deudor:</strong></label>
+                    <div class="input-group">
+                <InputSelect @bind-Value="Cobro.DeudorId" class="form-control form-select">
+                    <option value="0" selected diabled>Seleccione un Deudor</option>
                     @foreach (var deudor in ListaDeudores)
                     {
                         <option value="@deudor.DeudorId">@deudor.Nombres</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="@(() => Cobro.DeudorId)" />
-                <button type="button" class="btn btn-primary mt-2" @onclick="ActualizarPrestamos">Actualizar Préstamos</button>
+                <button type="button" class="btn btn-outline-success bi bi-arrow-clockwise" @onclick="BuscarPrestamosPendientes">Buscar</button>
             </div>
+                        <ValidationMessage For="(() => Cobro.DeudorId)" />
+                </div>
 
-            <!-- Selección de Préstamo -->
-            <div class="mb-3">
-                <label for="PrestamoId" class="form-label">Préstamo:</label>
-                <InputSelect @bind-Value="PrestamoSeleccionado.PrestamoId" class="form-control">
-                    <option value="">Seleccione un Préstamo</option>
-                    @foreach (var prestamo in ListaPrestamosDeudor)
-                    {
-                        <option value="@prestamo.PrestamoId">Préstamo: @prestamo.PrestamoId - Balance: @prestamo.Balance</option>
-                    }
-                </InputSelect>
-            </div>
+                @* Detalles del Cobro *@
+                <div class="border border-success p-3 mt-3">
+                    <h5>Detalles del Cobro</h5>
 
-            <!-- Monto -->
-            <div class="mb-3">
-                <label for="Monto" class="form-label">Monto a Pagar:</label>
-                <InputNumber @bind-Value="PrestamoSeleccionado.Monto" class="form-control" />
-                <ValidationMessage For="@(() => PrestamoSeleccionado.Monto)" />
-            </div>
-
-            <!-- Botón para agregar al detalle -->
-            <div class="mb-3">
-                <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
-                    Agregar al Detalle
-                </button>
-            </div>
-
-            <!-- Tabla de detalles -->
-            @if (DetallesCobro != null && DetallesCobro.Count > 0)
-            {
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Deudor</th>
-                            <th>Préstamo Id</th>
-                            <th>Monto a Pagar</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var detalle in DetallesCobro)
-                        {
-                            <tr>
-                                <td>@ListaDeudores.FirstOrDefault(d => d.DeudorId == detalle.DeudorId)?.Nombres</td>
-                                <td>@detalle.PrestamoId</td>
-                                <td>@detalle.MontoPagado</td>
-                                <td>
-                                    <button class="btn btn-danger" @onclick="() => RemoverDetalle(detalle)">
-                                        Remover
-                                    </button>
-                                </td>
+                    <PrestamoPicker Prestamos="ListaPrestamos"
+                                    PrestamoId="DetalleSeleccionado.PrestamoId"
+                                    Valor="DetalleSeleccionado.ValorCobrado"
+                                    OnPrestamoSelected="HandlePrestamoSelected" />
+                    <hr />
+                    <table class="table table-light">
+                        <thead class="table table-striped">
+                            <tr class="Text-center">
+                                <th>Pr&eacute;stamo</th>
+                                <th>Cobrado</th>
+                                <th>Remover</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Cobro.CobrosDetalle)
+                            {
+                                <th>@detalle.PrestamoId</th>
+                                <th>@detalle.ValorCobrado</th>
+                                <th>
+                                    <button type="button" class="btn btn-outline-danger bi bi-trash"
+                                            @onclick="() => RemoverDetalle(detalle)"></button>
+                                </th>
+                            }
+                        </tbody>
+                    </table>
+                    <hr />
+                </div>
+                @* Monto *@
+                <div class="row">
+                    <div class="col-6 offset-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Monto</strong></label>
+                            <label class="form-control text-end"><strong>@Cobro.Monto</strong></label>
 
+                            <ValidationMessage For="(() => Cobro.Monto)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* footer *@
+            <div class="card-footer text-center mt-2">
+                <a href="/Cobro/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"></span> Volver</a>
+                <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
+            </div>
         </div>
     </div>
-
-    <div class="card-footer bg-light d-flex justify-content-center mt-3">
-        <div class="btn-group">
-            <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
-            <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-floppy mt-3"></span> Guardar </button>
-            <a type="button" href="/Cobro/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
-        </div>
-    </div>
-
 </EditForm>
 
 @code {
-    // Propiedades principales
     public Cobros Cobro { get; set; } = new Cobros();
-    public List<Deudores> ListaDeudores { get; set; } = new List<Deudores>();
-    public List<Prestamos> ListaPrestamosDeudor { get; set; } = new List<Prestamos>();
+    public CobrosDetalle DetalleSeleccionado { get; set; } = new();
+    public List<Deudores> ListaDeudores { get; set; } = [];
+    public List<Prestamos> ListaPrestamos { get; set; } = [];
 
-    // Propiedades relacionadas con los detalles de cobro
-    public CobrosDetalle cobrosDetalle { get; set; } = new CobrosDetalle();
-    public List<CobrosDetalle> DetallesCobro { get; set; } = new List<CobrosDetalle>();
-    public Prestamos PrestamoSeleccionado { get; set; } = new Prestamos();
-
-    // Método de inicialización
     protected override async Task OnInitializedAsync()
     {
-        ListaDeudores = await DeudorService.ObtenerEntidadesAsync();
-
-        // Establecer fecha actual si no está definida
-        if (Cobro.Fecha == default(DateOnly))
-        {
-            Cobro.Fecha = DateOnly.FromDateTime(DateTime.Now);
-        }
+        ListaDeudores = await DeudorService
+        .Listar(d => true);
+        Cobro.Fecha = DateTime.Now;
     }
 
-    // Método para limpiar y crear un nuevo cobro
-    public void Nuevo()
+    public async Task BuscarPrestamosPendientes()
     {
-        Cobro = new Cobros();
-        DetallesCobro.Clear(); // Limpiar detalles del cobro
+        ListaPrestamos = await PrestamoService
+        .GetPrestamosPendientes(Cobro.DeudorId);
     }
 
-    // Método para cargar préstamos del deudor seleccionado
-    public async Task CargarPrestamosDeudor(ChangeEventArgs e)
+    private async Task HandlePrestamoSelected((Prestamos prestamos, double valor) selection)
     {
-        int deudorId = int.Parse(e.Value.ToString());
-        ListaPrestamosDeudor = await PrestamoService.ObtenerPrestamosPorDeudor(deudorId);
+        var detalle = new CobrosDetalle
+            {
+                PrestamoId = selection.prestamos.PrestamoId,
+                ValorCobrado = selection.valor
 
-        // Limpiar selección anterior
-        PrestamoSeleccionado = new Prestamos();
+            };
 
-        StateHasChanged(); // Forzar actualización de la UI
+        Cobro.CobrosDetalle.Add(detalle);
+        Cobro.Monto = Cobro.CobrosDetalle.Sum(d => d.ValorCobrado);
+
+        DetalleSeleccionado = new CobrosDetalle();
+        await Task.CompletedTask;
     }
 
-    // Método para actualizar préstamos con un botón
-    public async Task ActualizarPrestamos()
-    {
-        if (Cobro.DeudorId != 0)
-        {
-            ListaPrestamosDeudor = await PrestamoService.ObtenerPrestamosPorDeudor(Cobro.DeudorId);
-            PrestamoSeleccionado = new Prestamos();
-            StateHasChanged(); // Actualizar el estado de la interfaz
-        }
-    }
-
-    public void AgregarDetalle()
-    {
-        if (PrestamoSeleccionado != null && PrestamoSeleccionado.Monto > 0)
-        {
-            DetallesCobro.Add(new CobrosDetalle
-                {
-                    CobroId = Cobro.DeudorId,
-                    PrestamoId = PrestamoSeleccionado.PrestamoId,
-                    MontoPagado = PrestamoSeleccionado.Monto,
-                    DeudorId = Cobro.DeudorId // Agregar el DeudorId aquí
-                });
-
-            // Sumar el monto al campo Monto del Cobro
-            Cobro.Monto += PrestamoSeleccionado.Monto;
-
-            // Limpiar la selección de préstamo
-            PrestamoSeleccionado = new Prestamos();
-        }
-    }
-
-    // Método para remover un detalle de cobro
-    public void RemoverDetalle(CobrosDetalle detalle)
-    {
-        DetallesCobro.Remove(detalle);
-        // Restar el monto del cobro si se remueve un detalle
-        Cobro.Monto -= detalle.MontoPagado;
-    }
-
-    // Método para guardar el cobro
     public async Task Guardar()
     {
-        // Asignar detalles de cobro
-        Cobro.Detalles = DetallesCobro;
+        var guardo = await CobroService.Guardar(Cobro);
 
-        // Intentar guardar el cobro
-        bool guardo = await CobroService.Guardar(Cobro);
         if (guardo)
         {
-            // Limpiar el formulario después de guardar
-            Nuevo();
+            navigationManager.NavigateTo("/Cobro/Index");
         }
+    }
+
+    public void RemoverDetalle(CobrosDetalle detalle)
+    {
+        Cobro.CobrosDetalle.Remove(detalle);
+        DetalleSeleccionado = detalle;
     }
 }
