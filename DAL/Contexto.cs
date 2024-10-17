@@ -17,14 +17,6 @@ namespace FrailynGarcia_Ap1_p1.DAL
 
         public virtual DbSet<CobrosDetalle> CobrosDetalle { get; set; }
 
-        public DbSet<Clientes> Clientes { get; set; }
-
-        public DbSet<ClientesDetalle> ClientesDetalle { get; set; }
-
-        public DbSet<Telefonos> Telefonos { get; set; }
-
-        public DbSet<TiposTelefonos> TiposTelefonos { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -35,15 +27,6 @@ namespace FrailynGarcia_Ap1_p1.DAL
                 new Deudores(){DeudorId = 3, Nombres = "Abel"}
 
                 });
-
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<TiposTelefonos>().HasData(new List<TiposTelefonos>()
-            {
-                new TiposTelefonos(){TipoId=1, Descripcion="Telefono" },
-                new TiposTelefonos(){TipoId=2, Descripcion="Celular" },
-                new TiposTelefonos(){TipoId=3, Descripcion="Oficina" }
-
-            });
         }
 
 
