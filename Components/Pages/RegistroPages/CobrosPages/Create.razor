@@ -65,14 +65,17 @@
                         <tbody>
                             @foreach (var detalle in Cobro.CobrosDetalle)
                             {
-                                <td>@detalle.PrestamoId</td>
-                                <td>@detalle.ValorCobrado</td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-danger bi bi-trash"
-                                            @onclick="() => RemoverDetalle(detalle)"></button>
-                                </td>
+                            <tr> 
+                            <td>@detalle.PrestamoId</td>
+                             <td>@detalle.ValorCobrado</td>
+                              <td>
+                    <button type="button" class="btn btn-outline-danger bi bi-trash"
+                            @onclick="() => RemoverDetalle(detalle)"></button>
+                </td>
+                        </tr> 
                             }
-                        </tbody>
+                    </tbody>
+
                     </table>
                     <hr />
                 </div>
