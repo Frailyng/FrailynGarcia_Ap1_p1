@@ -65,12 +65,12 @@
                         <tbody>
                             @foreach (var detalle in Cobro.CobrosDetalle)
                             {
-                                <th>@detalle.PrestamoId</th>
-                                <th>@detalle.ValorCobrado</th>
-                                <th>
+                                <td>@detalle.PrestamoId</td>
+                                <td>@detalle.ValorCobrado</td>
+                                <td>
                                     <button type="button" class="btn btn-outline-danger bi bi-trash"
                                             @onclick="() => RemoverDetalle(detalle)"></button>
-                                </th>
+                                </td>
                             }
                         </tbody>
                     </table>
