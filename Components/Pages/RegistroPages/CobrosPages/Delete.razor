@@ -1,11 +1,9 @@
-﻿@page "/Cobro/Delete"
-@page "/Cobro/Delete/{Id:int}"
+﻿@page "/Cobro/Delete/{CobroId:int}"
 @inject CobrosService CobroService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-@if (Cobro != null)
-{
+<PageTitle>Delete</PageTitle>
     <div class="container">
         <div class="card shadow-header">
             <!-- Header -->
@@ -30,11 +28,24 @@
                                             <div class="col-md-8">
                                                 <ul class="list-unstyled">
                                                     <li><strong>CobroId:</strong> @Cobro.CobroId</li>
-                                                    <li><strong>Fecha:</strong> @Cobro.Fecha?.ToString("dd/MM/yyyy")</li>
-                                                    <li><strong>DeudorId:</strong> @Cobro.DeudorId</li>
+                                                    <li><strong>Fecha:</strong> @Cobro.Fecha</li>
+                                                    <li><strong>DeudorId:</strong> @Cobro.Deudor.DeudorId</li>
+                                                     <li><strong>Deudor:</strong> @Cobro.Deudor.Nombres</li>
                                                     <li><strong>Monto:</strong> @Cobro.Monto</li>
                                                 </ul>
+                                            <div class="border border-success p-2 mt-2">
+                                                <h7><strong>Detalles de cobro</strong></h7>
+                                                <div>
+                                                    @foreach (var detalle in Cobro.CobrosDetalle)
+                                                    {
+                                                        <li class="mt-2">
+                                                            Préstamo ID: @detalle.PrestamoId, Valor Cobrado: @detalle.ValorCobrado
+                                                        </li>
+                                                    }
+                                                </div>
                                             </div>
+                                        </div>
+                                      </div>
                                         </div>
                                     </div>
                                 </div>
@@ -42,8 +53,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
             <!-- Footer -->
             <div class="card-footer">
                 <button type="button" class="btn btn-outline-danger" @onclick="EliminarCobro">
@@ -53,36 +62,36 @@
                     <i class="bi bi-box-arrow-left"></i> Volver
                 </a>
             </div>
-        </div>
     </div>
-}
-else
-{
-    <p>Registro no encontrado.</p>
-}
+        </div>
+
+@Mensaje
 
 @code {
     [Parameter]
-    public int Id { get; set; }
-    public Cobros? Cobro { get; set; } = new Cobros();
+    public int CobroId { get; set; }
+    public Cobros Cobro { get; set; } = new Cobros();
+    public string Mensaje { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        if (Id != 0)
-        {
-            Cobro = await CobroService.Buscar(Id);
-        }
+
+        Cobro = await CobroService.Buscar(CobroId);
+
     }
 
     public async Task EliminarCobro()
     {
-        if (Id == 0 && Cobro == null)
+        var eliminado = await CobroService.ELiminar(Cobro.CobroId);
+
+        if (eliminado)
         {
-            return;
-        }
-        if (await CobroService.Eliminar(Id))
-        {
+            Mensaje = "Se elimino correctamente";
             navigationManager.NavigateTo("/Cobro/Index");
+        }
+        else
+        {
+            Mensaje = "No se ha eliminado correctamente";
         }
     }
 }
