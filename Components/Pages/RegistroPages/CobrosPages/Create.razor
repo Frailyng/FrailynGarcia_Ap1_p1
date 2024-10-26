@@ -136,10 +136,10 @@
     }
 
     public async Task Guardar()
-    {
-        var guardo = await CobroService.Guardar(Cobro);
+    { 
+        var paso = await CobroService.Guardar(Cobro);
 
-        if (guardo)
+        if (paso)
         {
             navigationManager.NavigateTo("/Cobro/Index");
         }
@@ -150,4 +150,39 @@
         Cobro.CobrosDetalle.Remove(detalle);
         DetalleSeleccionado = detalle;
     }
+
+    /*private async Task AplicarValor()
+    {
+        Cobro.CobrosDetalle.Clear();
+        if (ValorAplicar > 0)
+        {
+
+            var prestamosPendientes = await prestamosService
+                .GetPrestamosPendientes(Cobro.DeudorId);
+            foreach (var prestamo in prestamosPendientes)
+            {
+                double valorCobrado = 0;
+                if (prestamo.Balance < ValorAplicar)
+                    valorCobrado = prestamo.Balance;
+                else
+                    valorCobrado = ValorAplicar;
+
+                ValorAplicar -= valorCobrado;
+
+                Cobro.CobrosDetalle.Add(
+                    new CobrosDetalle()
+                        {
+                            PrestamoId = prestamo.PrestamoId,
+                            ValorCobrado = valorCobrado
+                        }
+                );
+            }
+
+
+        }
+
+
+
+    }*/
+
 }
