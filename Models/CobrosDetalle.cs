@@ -16,8 +16,9 @@ namespace FrailynGarcia_Ap1_p1.Models
         public double ValorCobrado { get; set; }
 
         [ForeignKey("CobroId")]
+        [InverseProperty("CobrosDetalle")]
         public virtual Cobros Cobro { get; set; } = null!;
-  
+
     }
 
 }
