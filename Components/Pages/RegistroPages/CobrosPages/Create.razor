@@ -1,7 +1,9 @@
-﻿@page "/Cobro/Create"
-@inject CobrosService CobroService
-@inject DeudorService DeudorService
-@inject PrestamoService PrestamoService
+﻿@page "/Cobros/Create"
+
+
+@inject CobrosService cobroService
+@inject DeudoresService deudoresService
+@inject PrestamosService prestamosService
 @inject NavigationManager navigationManager
 
 <PageTitle>Crear Cobros</PageTitle>
@@ -106,17 +108,19 @@
     public List<Deudores> ListaDeudores { get; set; } = [];
     public List<Prestamos> ListaPrestamos { get; set; } = [];
 
+    public double ValorAplicar { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        ListaDeudores = await DeudorService
-        .Listar(d => true);
+        ListaDeudores = await deudoresService
+            .Listar(d => true);
         Cobro.Fecha = DateTime.Now;
     }
 
     public async Task BuscarPrestamosPendientes()
     {
-        ListaPrestamos = await PrestamoService
-        .GetPrestamosPendientes(Cobro.DeudorId);
+        ListaPrestamos = await prestamosService
+            .GetPrestamosPendientes(Cobro.DeudorId);
     }
 
     private async Task HandlePrestamoSelected((Prestamos prestamos, double valor) selection)
@@ -136,12 +140,17 @@
     }
 
     public async Task Guardar()
-    { 
-        var paso = await CobroService.Guardar(Cobro);
+    {
+        var paso = await cobroService.Guardar(Cobro);
 
         if (paso)
         {
+            //Mensaje = "Creado correctamente";
             navigationManager.NavigateTo("/Cobro/Index");
+        }
+        else
+        {
+            //Mensaje = "No se ha creado correctamente";
         }
     }
 
@@ -151,7 +160,8 @@
         DetalleSeleccionado = detalle;
     }
 
-    /*private async Task AplicarValor()
+
+    private async Task AplicarValor()
     {
         Cobro.CobrosDetalle.Clear();
         if (ValorAplicar > 0)
@@ -183,6 +193,6 @@
 
 
 
-    }*/
+    }
 
 }
