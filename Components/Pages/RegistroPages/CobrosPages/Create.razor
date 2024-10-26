@@ -1,6 +1,5 @@
 ﻿@page "/Cobros/Create"
 
-
 @inject CobrosService cobroService
 @inject DeudoresService deudoresService
 @inject PrestamosService prestamosService
@@ -10,40 +9,46 @@
 <EditForm Model="Cobro" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
-    <div class="container"
-    <div class="card shadow-lg">
-        <div class="card-header text-center">
-            <h5> class="card-title"> Crear cobro</h5>
-        </div>
-
-        <div class="card-body">
-
-            <!-- Cobro Id -->
-            <div class="mb-3">
-                <label for="CobroId" class="form-label"><strong>CobroId:</strong></label>
-                <InputNumber @bind-Value="Cobro.CobroId" class="form-control" readonly> </InputNumber>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h5 class="card-title">Crear Cobro</h5>
             </div>
 
-            <!-- Fecha -->
-            <div class="mb-3">
-                <label for="Fecha" class="form-label"><strong>Fecha:</strong></label>
-                <InputDate @bind-Value="Cobro.Fecha" class="form-control"> </InputDate>
-            </div>
+            <div class="card-body">
+                @* CobroId *@
+                <div class="mb-3">
+                    <label class="form-label"><strong>CobroId</strong></label>
+                    <InputNumber class="form-control" @bind-Value="Cobro.CobroId" readonly></InputNumber>
+                </div>
 
-            <!-- Deudor -->
-            <div class="mb-3">
-                <label for="DeudorId" class="form-label"><strong>Deudor:</strong></label>
+                @* Fecha *@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Fecha</strong></label>
+                    <InputDate class="form-control" @bind-Value="Cobro.Fecha"></InputDate>
+                </div>
+
+                @* Deudor *@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Deudor</strong></label>
+
                     <div class="input-group">
-                <InputSelect @bind-Value="Cobro.DeudorId" class="form-control form-select">
-                    <option value="0" selected diabled>Elija una opción</option>
-                    @foreach (var deudor in ListaDeudores)
-                    {
-                        <option value="@deudor.DeudorId">@deudor.Nombres</option>
-                    }
-                </InputSelect>
-                <button type="button" class="btn btn-outline-success bi bi-arrow-clockwise" @onclick="BuscarPrestamosPendientes">Buscar</button>
-            </div>
-                        <ValidationMessage For="(() => Cobro.DeudorId)" />
+
+                        <InputSelect class="form-control form-select" @bind-Value="Cobro.DeudorId">
+                            <option value="0" selected disabled>Elija una opción</option>
+                            @foreach (var deudor in ListaDeudores)
+                            {
+                                <option value="@deudor.DeudorId">@deudor.Nombres</option>
+                            }
+                        </InputSelect>
+                        <button type="button" class="btn btn-outline-success bi bi-arrow-clockwise"
+                                @onclick="BuscarPrestamosPendientes">
+                            Buscar
+                        </button>
+
+                    </div>
+
+                    <ValidationMessage For="(() => Cobro.DeudorId)" />
                 </div>
 
                 @* Detalles del Cobro *@
@@ -58,25 +63,24 @@
                     <table class="table table-light">
                         <thead class="table table-striped">
                             <tr class="Text-center">
-                                <td>Pr&eacute;stamo</td>
-                                <td>Cobrado</td>
-                                <td>Remover</td>
+                                <th>Pr&eacute;stamo</th>
+                                <th>Cobrado</th>
+                                <th>Remover</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var detalle in Cobro.CobrosDetalle)
                             {
-                            <tr> 
-                            <td>@detalle.PrestamoId</td>
-                             <td>@detalle.ValorCobrado</td>
-                              <td>
-                    <button type="button" class="btn btn-outline-danger bi bi-trash"
-                            @onclick="() => RemoverDetalle(detalle)"></button>
-                </td>
-                        </tr> 
+                                <tr>
+                                    <td>@detalle.PrestamoId</td>
+                                    <td>@detalle.ValorCobrado</td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-danger bi bi-trash"
+                                                @onclick="() => RemoverDetalle(detalle)"></button>
+                                    </td>
+                                </tr>
                             }
-                    </tbody>
-
+                        </tbody>
                     </table>
                     <hr />
                 </div>
@@ -102,6 +106,7 @@
     </div>
 </EditForm>
 
+
 @code {
     public Cobros Cobro { get; set; } = new Cobros();
     public CobrosDetalle DetalleSeleccionado { get; set; } = new();
@@ -116,20 +121,18 @@
             .Listar(d => true);
         Cobro.Fecha = DateTime.Now;
     }
-
     public async Task BuscarPrestamosPendientes()
     {
         ListaPrestamos = await prestamosService
             .GetPrestamosPendientes(Cobro.DeudorId);
     }
 
-    private async Task HandlePrestamoSelected((Prestamos prestamos, double valor) selection)
+    private async Task HandlePrestamoSelected((Prestamos prestamo, double valor) selection)
     {
         var detalle = new CobrosDetalle
             {
-                PrestamoId = selection.prestamos.PrestamoId,
+                PrestamoId = selection.prestamo.PrestamoId,
                 ValorCobrado = selection.valor
-
             };
 
         Cobro.CobrosDetalle.Add(detalle);
@@ -159,7 +162,6 @@
         Cobro.CobrosDetalle.Remove(detalle);
         DetalleSeleccionado = detalle;
     }
-
 
     private async Task AplicarValor()
     {

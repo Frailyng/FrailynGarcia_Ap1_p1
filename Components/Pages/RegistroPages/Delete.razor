@@ -1,19 +1,17 @@
-﻿@page "/Prestamo/Delete/{PrestamoId:int}"
+﻿page "/Prestamo/Delete/{PrestamoId:int}"
 
-@inject PrestamosService PrestamosService
+@inject PrestamosService prestamosService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
 @*HTML*@
-<PageTitle> Delete</PageTitle>
-    <div class="container">
-        <div class="card shadow-lg">
-
+<PageTitle>Delete</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
         @*header*@
         <div class="card-header text-center">
             <h5><strong>Datos del prestamo</strong></h5>
         </div>
-
         @*body*@
         <div class="card-body">
             <div class="text-center">
@@ -27,7 +25,6 @@
                 <li><strong>Monto: </strong>@Prestamo.Monto</li>
             </ul>
         </div>
-
         @*Footer*@
         <div class="card-footer text-center">
             <a href="/Prestamo/Index" class="btn btn-primary"> <span class="bi bi-arrow-left"></span> Volver</a>
@@ -37,32 +34,30 @@
 </div>
 @Mensaje
 
-
 @code {
     [Parameter]
     public int PrestamoId { get; set; }
+
     public Prestamos Prestamo { get; set; } = new Prestamos();
     public string Mensaje { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-
-        Prestamo = await PrestamosService.Buscar(PrestamoId);
-
+        Prestamo = await prestamosService.Buscar(PrestamoId);
     }
 
     public async Task Eliminar()
     {
-        var eliminado = await PrestamosService.Eliminar(Prestamo.PrestamoId);
+        var eliminado = await prestamosService.Eliminar(Prestamo.PrestamoId);
 
         if (eliminado)
         {
-            Mensaje = "Se elimino Correctamente";
-            navigationManager.NavigateTo("Prestamo/Index");
+            Mensaje = "Se elimino correctamente";
+            navigationManager.NavigateTo("/Prestamo/Index");
         }
         else
         {
-            Mensaje = "No se ha eliminado Correctamente";
+            Mensaje = "No se ha eliminado correctamente";
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 
 namespace FrailynGarcia_Ap1_p1.Services;
 
+
 public class PrestamosService(IDbContextFactory<Contexto> DbFactory)
 {
     private async Task<bool> Existe(int prestamoId)
@@ -84,3 +85,4 @@ public class PrestamosService(IDbContextFactory<Contexto> DbFactory)
             .FirstOrDefaultAsync(p => p.DeudorId == id);
     }
 }
+
