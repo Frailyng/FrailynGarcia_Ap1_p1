@@ -3,6 +3,7 @@ using System;
 using FrailynGarcia_Ap1_p1.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -11,29 +12,35 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrailynGarcia_Ap1_p1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20241017214746_Initial")]
-    partial class Initial
+    [Migration("20241026180255_inicial")]
+    partial class inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("FrailynGarcia_Ap1_p1.Models.Cobros", b =>
                 {
                     b.Property<int>("CobroId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CobroId"));
 
                     b.Property<int>("DeudorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("Monto")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
                     b.HasKey("CobroId");
 
@@ -46,16 +53,18 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 {
                     b.Property<int>("DetalleId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DetalleId"));
 
                     b.Property<int>("CobroId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("PrestamoId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<double>("ValorCobrado")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
                     b.HasKey("DetalleId");
 
@@ -68,11 +77,13 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 {
                     b.Property<int>("DeudorId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeudorId"));
 
                     b.Property<string>("Nombres")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DeudorId");
 
@@ -100,20 +111,22 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 {
                     b.Property<int>("PrestamoId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PrestamoId"));
 
                     b.Property<double>("Balance")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
-                    b.Property<string>("Conceptos")
+                    b.Property<string>("Concepto")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DeudorId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<double>("Monto")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
                     b.HasKey("PrestamoId");
 
