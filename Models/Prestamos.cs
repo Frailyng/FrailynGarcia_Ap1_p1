@@ -8,19 +8,20 @@ namespace FrailynGarcia_Ap1_p1.Models
     {
         [Key]
         public int PrestamoId { get; set; }
-        [Required(ErrorMessage = "El campo Deudores no puede estar en blanco")]
 
-        public string Conceptos { get; set; } = null!;
+        [Required(ErrorMessage = "Este campo es requerido")]
+        public string Concepto { get; set; } = null!;
 
-        [Range(1, double.MaxValue, ErrorMessage = "El valor no puede ser inferior a 1.")]
+        [Range(1, double.MaxValue, ErrorMessage = "El monto no puede ser menor a 1")]
         public double Monto { get; set; }
 
         public double Balance { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Debe escoger un deudor valido.")]
-        public int DeudorId {  get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un deudor válido")]
+        public int DeudorId { get; set; }
 
         [ForeignKey("DeudorId")]
+        [InverseProperty("Prestamos")]
         public virtual Deudores Deudor { get; set; } = null!;
 
     }

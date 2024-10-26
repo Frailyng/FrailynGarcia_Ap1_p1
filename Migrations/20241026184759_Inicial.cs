@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FrailynGarcia_Ap1_p1.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,9 +17,9 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 name: "Deudores",
                 columns: table => new
                 {
-                    DeudorId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nombres = table.Column<string>(type: "TEXT", nullable: false)
+                    DeudorId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombres = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,11 +30,11 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 name: "Cobros",
                 columns: table => new
                 {
-                    CobroId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DeudorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Monto = table.Column<double>(type: "REAL", nullable: false)
+                    CobroId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeudorId = table.Column<int>(type: "int", nullable: false),
+                    Monto = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,12 +51,12 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 name: "Prestamos",
                 columns: table => new
                 {
-                    PrestamoId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Conceptos = table.Column<string>(type: "TEXT", nullable: false),
-                    Monto = table.Column<double>(type: "REAL", nullable: false),
-                    Balance = table.Column<double>(type: "REAL", nullable: false),
-                    DeudorId = table.Column<int>(type: "INTEGER", nullable: false)
+                    PrestamoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Concepto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Monto = table.Column<double>(type: "float", nullable: false),
+                    Balance = table.Column<double>(type: "float", nullable: false),
+                    DeudorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -73,11 +73,11 @@ namespace FrailynGarcia_Ap1_p1.Migrations
                 name: "CobrosDetalle",
                 columns: table => new
                 {
-                    DetalleId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CobroId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PrestamoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ValorCobrado = table.Column<double>(type: "REAL", nullable: false)
+                    DetalleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CobroId = table.Column<int>(type: "int", nullable: false),
+                    PrestamoId = table.Column<int>(type: "int", nullable: false),
+                    ValorCobrado = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {

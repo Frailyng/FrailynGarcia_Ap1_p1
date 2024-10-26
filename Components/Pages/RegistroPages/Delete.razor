@@ -1,42 +1,34 @@
 ﻿@page "/Prestamo/Delete/{PrestamoId:int}"
-@inject PrestamoService PrestamoService
+
+@inject PrestamosService prestamosService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<PageTitle> Delete</PageTitle>
-    <div class="container">
-        <div class="card shadow-header">
-
-            <!-- Header -->
-            <div class="card-header  bg-primary text-white text-center py-2 rounded">
-                <h3><strong>Eliminar Prestamo</strong></h3>
+@*HTML*@
+<PageTitle>Delete</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        @*header*@
+        <div class="card-header text-center">
+            <h5><strong>Datos del prestamo</strong></h5>
+        </div>
+        @*body*@
+        <div class="card-body">
+            <div class="text-center">
+                <h5><strong>Desea eliminar el prestamo?</strong></h5>
             </div>
-            <div class="card-header">
-                <h3 class="text-danger">¿Estás seguro de que quieres eliminar este Prestamo?</h3>
-            </div>
-            <!-- Body -->
-             <div class="card-body">
-                <div class="border-primary border-2 borde">
-                   <div class="card-body">
-                      <div class="row">
-                         <div class="col-md-8">
-                            <ul class="list-unstyled">
-                                <li><strong>PrestamoId:</strong> @Prestamo.PrestamoId</li>
-                                 <li><strong>Deudores:</strong> @Prestamo.Deudor.DeudorId</li>
-                                <li><strong>Deudores:</strong> @Prestamo.Deudor.Nombres</li>
-                                 <li><strong>Conceptos:</strong> @Prestamo.Conceptos</li>
-                                 <li><strong>Monto:</strong> @Prestamo.Monto</li>
-                              </ul>
-                             </div>
-                           </div>
-                         </div>
-                      </div>
-                   </div>
-
-            @*Footer*@
+            <ul>
+                <li><strong>Id: </strong>@Prestamo.PrestamoId</li>
+                <li><strong>DeudorId: </strong>@Prestamo.Deudor.DeudorId</li>
+                <li><strong>Deudor: </strong>@Prestamo.Deudor.Nombres</li>
+                <li><strong>Concepto: </strong>@Prestamo.Concepto</li>
+                <li><strong>Monto: </strong>@Prestamo.Monto</li>
+            </ul>
+        </div>
+        @*Footer*@
         <div class="card-footer text-center">
             <a href="/Prestamo/Index" class="btn btn-primary"> <span class="bi bi-arrow-left"></span> Volver</a>
-            <button type="button" class="btn btn-danger bi bi-trash" @onclick="EliminarPrestamo"> Eliminar</button>
+            <button type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
         </div>
     </div>
 </div>
@@ -45,28 +37,27 @@
 @code {
     [Parameter]
     public int PrestamoId { get; set; }
+
     public Prestamos Prestamo { get; set; } = new Prestamos();
     public string Mensaje { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-
-        Prestamo = await PrestamoService.Buscar(PrestamoId);
-
+        Prestamo = await prestamosService.Buscar(PrestamoId);
     }
 
-    public async Task EliminarPrestamo()
+    public async Task Eliminar()
     {
-        var eliminado = await PrestamoService.Eliminar(Prestamo.PrestamoId);
+        var eliminado = await prestamosService.Eliminar(Prestamo.PrestamoId);
 
         if (eliminado)
         {
-            Mensaje = "Se elimino Correctamente";
-            navigationManager.NavigateTo("Prestamo/Index");
+            Mensaje = "Se elimino correctamente";
+            navigationManager.NavigateTo("/Prestamo/Index");
         }
         else
         {
-            Mensaje = "No se ha eliminado Correctamente";
+            Mensaje = "No se ha eliminado correctamente";
         }
     }
 }

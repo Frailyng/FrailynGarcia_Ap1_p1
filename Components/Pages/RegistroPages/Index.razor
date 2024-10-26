@@ -1,76 +1,76 @@
 ﻿@page "/Prestamo/Index"
-@inject PrestamoService PrestamoService
+
+@inject PrestamosService prestamosService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
 <PageTitle>Registro de Prestamos</PageTitle>
 <div class="Container">
     <div class="card shadow-lg">
-        <div class="card-header">
-            <h5 class="card-title">Prestamo</h5>
+        <div class="card-header space-between">
+            <h5 class="card-title">Registro de Prestamos</h5>
+            <a href="/Prestamo/Create" class="btn btn-primary"> <span class="bi bi-plus-square mt-3"></span> Crear</a>
         </div>
         
         <div class="card-body">
- <!-- Filtros de búsqueda y botón crear -->
- <div class="mb-3 row align-items-end">
-     <div class="col-md-3">
-         <label for="filtrarPor" class="form-label">Filtrar por:</label>
-         <select id="filtrarPor" class="form-select form-select-sm" @bind="Filtro">
-             <option value="deudores">Deudores</option>
-             <option value="conceptos">Conceptos</option>
-         </select>
-     </div>
-     <div class="col-md-4">
-         <label for="valorFiltro" class="form-label">Buscar:</label>
-         <input type="text" id="valorFiltro" class="form-control form-control-sm" placeholder="Buscar..." @bind="valorFiltro">
-     </div>
-     <div class="col-md-3">
-         <button class="btn btn-outline-primary btn-sm" type="button" @onclick="Buscar">
-             <span class="bi bi-search"></span> Buscar
-         </button>
-     </div>
-     <div class="col-md-2 text-end">
-                    <!-- Botón Crear que lleva a /Prestamo/Create -->
-                    <a href="/Prestamo/Create" class="btn btn-success btn-sm">
-                        <span class="bi bi-plus-square"></span> Crear
-                    </a>
+            @*labels*@
+            <div class="row">
+
+                @*Filtrar por*@
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Filtrar por</strong></label>
+                </div>
+
+                @*ValorFiltro*@
+                <div class="col-4">
+                    <label class="col-form-label"><strong>B&uacute;squeda</strong></label>
                 </div>
             </div>
-            <!-- Tabla -->
-            <table class="table table-light table-bordered">
-                <thead class="table table-striped text-center text-white bg-primary">
+
+            @*Inputs y botones*@
+            <div class="row align-items-center">
+                @*filtro*@
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="Filtro">
+                        <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        <option value="Deudor">Deudor</option>
+                        <option value="Concepto">Concepto</option>
+                    </InputSelect>
+                </div>
+
+                @*Busqueda*@
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+
+            </div>
+
+            <table class="table table-hover">
+                <thead class="table  table-striped text-black">
                     <tr>
-                        <th>ID</th>
-                        <th>Deudores</th>
-                        <th>Conceptos</th>
-                        <th>Montos</th>
-                        <th>Editar</th>
-                        <th>Eliminar</th>
+                        <th><strong>PrestamoId</strong></th>
+                        <th><strong>Deudor</strong></th>
+                        <th><strong>Concepto</strong></th>
+                        <th><strong>Monto</strong></th>
+                        <th><strong> </strong></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (ListaPrestamos.Any())
-                    {
-                        foreach (var registro in ListaPrestamos)
-                        {
-                            <tr>
-                                <td class="text-center">@registro.PrestamoId</td>
-                                <td class="text-center">@registro.Deudor.Nombres</td>
-                                <td class="text-center">@registro.Conceptos</td>
-                                <td class="text-center">@registro.Monto</td>
-                                <td class="text-center">
-                                    <a href="/Prestamo/Edit/@registro.PrestamoId" class="btn bi bi-pencil-square"></a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="/Prestamo/Delete/@registro.PrestamoId" class="btn bi bi-trash"></a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
+                    @foreach (var prestamo in ListaPrestamos)
                     {
                         <tr>
-                            <td colspan="6" class="text-center">No hay Prestamos disponibles</td>
+                            <td> @prestamo.PrestamoId</td>
+                            <td> @prestamo.Deudor.Nombres</td>
+                            <td> @prestamo.Concepto</td>
+                            <td> @prestamo.Monto</td>
+
+                            <td class="text-center">
+                                <a href="/Prestamo/Edit/@prestamo.PrestamoId" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                                <a href="/Prestamo/Delete/@prestamo.PrestamoId" class="btn btn-outline-danger bi bi-trash"></a>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -83,42 +83,38 @@
     </div>
 </div>
 
-
 @code {
 
     public List<Prestamos> ListaPrestamos = new List<Prestamos>();
 
-    private string Filtro { get; set; } = string.Empty;
-    private string valorFiltro { get; set; } = string.Empty;
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        ListaPrestamos = await PrestamoService.GetList(p => p.PrestamoId > 0);
+        ListaPrestamos = await prestamosService.GetList(p => p.PrestamoId > 0);
     }
 
-    public async Task Buscar()
+    private async Task Buscar()
     {
-        if (valorFiltro.Trim() != "")
+        if (ValorFiltro.Trim() != "")
         {
-            if (Filtro == "deudores")
+            if (Filtro == "Deudor")
             {
-                ListaPrestamos = await PrestamoService.GetList(p => p.Deudor.Nombres.ToLower().Contains(valorFiltro.ToLower()));
+                ListaPrestamos = await prestamosService.GetList(p => p.Deudor.Nombres.ToLower().Contains(ValorFiltro.ToLower()));
             }
-            else if (Filtro == "conceptos")
+            else if (Filtro == "Concepto")
             {
-                ListaPrestamos = await PrestamoService.GetList(p => p.Conceptos.ToLower().Contains(valorFiltro.ToLower()));
+                ListaPrestamos = await prestamosService.GetList(p => p.Concepto.ToLower().Contains(ValorFiltro.ToLower()));
             }
         }
         else
-        {
-            ListaPrestamos = await PrestamoService.GetList(p => p.PrestamoId > 0);
-        }
+            ListaPrestamos = await prestamosService.GetList(p => p.PrestamoId > 0);
     }
-        private async Task Restablecer()
-        {
-            ListaPrestamos = await PrestamoService.GetList(p => p.PrestamoId > 0);
-            Filtro = string.Empty;
-            valorFiltro = string.Empty;
-        }
-
+    private async Task Restablecer()
+    {
+        ListaPrestamos = await prestamosService.GetList(e => e.PrestamoId > 0);
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
     }
+}

@@ -2,22 +2,22 @@
 @using Microsoft.EntityFrameworkCore
 
 
-@inject PrestamoService PrestamoService
-@inject DeudorService deudorService
+@inject PrestamosService PrestamosService
+@inject DeudoresService deudoresService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-
+@*HTML*@
 <PageTitle>Modificar</PageTitle>
 <EditForm Model="Prestamo" OnValidSubmit="Modificar">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="container">
-    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
-        <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-clipboard-list"></i> Editar Prestamos</h3>
-        </div>
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h5 class="card-title">Modificar Prestamo</h5>
+            </div>
 
         <div class="card-body">
 
@@ -36,8 +36,8 @@
                 @*Concepto*@
                 <div class="mb-3">
                     <label class="form-label"><strong>Concepto</strong></label>
-                    <InputText class="form-control" @bind-Value="Prestamo.Conceptos"></InputText>
-                    <ValidationMessage For="(() => Prestamo.Conceptos)" />
+                    <InputText class="form-control" @bind-Value="Prestamo.Concepto"></InputText>
+                    <ValidationMessage For="(() => Prestamo.Concepto)" />
                 </div>
                 @*Monto*@
                 <div class="mb-3">
@@ -55,7 +55,6 @@
         </div>
     </div>
 </EditForm>
-
 @Mensaje
 
 @code {
@@ -64,18 +63,18 @@
 
     public Prestamos Prestamo { get; set; } = new Prestamos();
     public string Mensaje { get; set; } = string.Empty;
-    public List<Deudores> ListaDeudores { get; set; }
+    public List<Deudores> ListaDeudores { get; set; } = new List<Deudores>();
 
 
     protected override async Task OnInitializedAsync()
     {
-        Prestamo = await PrestamoService.Buscar(PrestamoId);
-        ListaDeudores = await deudorService.Listar(d => d.DeudorId > 0);
+        Prestamo = await PrestamosService.Buscar(PrestamoId);
+        ListaDeudores = await deudoresService.Listar(d => d.DeudorId > 0);
     }
 
     public async Task Modificar()
     {
-        var creado = await PrestamoService.Guardar(Prestamo);
+        var creado = await PrestamosService.Guardar(Prestamo);
 
         if (creado)
         {

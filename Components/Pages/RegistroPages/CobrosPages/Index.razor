@@ -1,117 +1,157 @@
 ﻿@page "/Cobro/Index"
-@inject CobrosService CobroService
+
+@inject CobrosService cobroService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
 <PageTitle>Index</PageTitle>
-<div class="Container">
-    <div class="card shadow-lg">
-        <div class="card-header">
-            <h5 class="card-title">Cobros</h5>
-        </div>
+<div class="container">
+<div class="card shadow-lg">
+    <div class="card-header space-between">
+        <h5 class="card-title">Registro Cobros</h5>
+        <a href="/Cobros/Create" class="btn btn-primary">
+            <span class="bi bi-plus-square mt-3"></span> Crear
+        </a>
+    </div>
 
         <div class="card-body">
-            <!-- Filtros de búsqueda y botón crear -->
-            <div class="mb-3 row align-items-end">
-                <div class="col-md-3">
-                    <label for="filtrarPor" class="form-label">Filtrar por:</label>
-                    <select id="filtrarPor" class="form-select form-select-sm" @bind="Filtro">
-                        <option value="deudor">Deudor</option>
-                    </select>
+            @*labels*@
+            <div class="row">
+
+                @*Filtrar por*@
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Filtrar por</strong></label>
                 </div>
-                <div class="col-md-4">
-                    <label for="valorFiltro" class="form-label">Buscar:</label>
-                    <input type="text" id="valorFiltro" class="form-control form-control-sm" placeholder="Buscar..." @bind="valorFiltro">
+
+                @*ValorFiltro*@
+                <div class="col-4">
+                    <label class="col-form-label"><strong>B&uacute;squeda</strong></label>
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-outline-primary btn-sm" type="button" @onclick="Buscar">
-                        <span class="bi bi-search"></span> Buscar
+
+            </div>
+
+            @*Inputs y botones*@
+            <div class="row align-items-center">
+                @*filtro*@
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="Filtro">
+                        <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        <option value="Deudor">Deudor</option>
+                        <option value="Fecha">Fecha</option>
+                    </InputSelect>
+                </div>
+
+                @*Busqueda*@
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+
+
+                @*Restablecer*@
+                <div class="col-3">
+                    <button type="button" class="btn btn-outline-secondary bi bi-arrow-counterclockwise"
+                            @onclick="Restablecer">
                     </button>
                 </div>
-                <div class="col-md-2 text-end">
-                    <!-- Botón Crear que lleva a /Cobro/Create -->
-                    <a href="/Cobro/Create" class="btn btn-success btn-sm">
-                        <span class="bi bi-plus-square"></span> Crear
-                    </a>
+
+                @*FiltroFecha*@
+                <div class="row mt-3">
+
+                    @*Desde*@
+                    <div class="col-3">
+                        <label class="col-form-label"><strong>Desde</strong></label>
+                        <InputDate class="form-control" @bind-Value="Desde"></InputDate>
+                    </div>
+
+                    @*Hasta*@
+                    <div class="col-3">
+                        <label class="col-form-label"><strong>Hasta</strong></label>
+                        <div class="input-group">
+                            <InputDate class="form-control" @bind-Value="Hasta"></InputDate>
+                        </div>
+
+                    </div>
                 </div>
+
             </div>
-            <!-- Tabla -->
-            <table class="table table-light table-bordered">
-                <thead class="table table-striped text-center text-white bg-primary">
+
+            <table class="table table-hover text-center mt-3">
+                <thead class="table  table-striped text-black ">
                     <tr>
-                        <th>CobroID</th>
-                        <th>Fecha</th>
-                        <th>Deudor</th>
-                        <th>Montos</th>
-                        <th>Editar</th>
-                        <th>Eliminar</th>
+                        <th><strong>CobroId</strong></th>
+                        <th><strong>Fecha</strong></th>
+                        <th><strong>Deudor</strong></th>
+                        <th><strong>Monto</strong></th>
+                        <th><strong>Opciones</strong></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (ListaCobros.Any())
-                    {
-                        foreach (var cobro in ListaCobros)
-                        {
-                            <tr>
-                                <td class="text-center">@cobro.CobroId</td>
-                                <td class="text-center">@cobro.Fecha</td>
-                                <td class="text-center">@cobro.Deudor.Nombres</td>
-                                <td class="text-center">@cobro.Monto</td>
-                                <td class="text-center">
-                                    <a href="/Cobro/Edit/@cobro.CobroId" class="btn bi bi-pencil-square"></a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="/Cobro/Delete/@cobro.CobroId" class="btn bi bi-trash"></a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
+                    @foreach (var cobro in ListaCobros)
                     {
                         <tr>
-                            <td colspan="7" class="text-center">No hay Cobros disponibles</td>
+                            <td> @cobro.CobroId</td>
+                            <td> @cobro.Fecha.ToShortDateString()</td>
+                            <td> @cobro.Deudor.Nombres</td>
+                            <td> @cobro.Monto.ToString("N2")</td>
+
+                            <td class="text-center">
+                                <a href="/Cobro/Edit/@cobro.CobroId"
+                                   class="btn btn-outline-primary bi bi-pencil-square"></a>
+                                <a href="/Cobro/Delete/@cobro.CobroId" class="btn btn-outline-danger bi bi-trash"></a>
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
         <div class="card-footer space-between">
-            <label>Cantidad:  @ListaCobros.Count()</label>
-            <label>Total:  @ListaCobros.Sum(p => p.Monto)</label>
+            <label class="ms-3"><strong>Cantidad:</strong> @ListaCobros.Count</label>
+            <div class="col-5">
+                <label class="ms-5"><strong>Total:</strong> $@ListaCobros.Sum(p => p.Monto).ToString("N2")</label>
+            </div>
         </div>
     </div>
 </div>
 
-
 @code {
     public List<Cobros> ListaCobros = new List<Cobros>();
-    public string Filtro { get; set; } = string.Empty;
-    public string valorFiltro { get; set; } = string.Empty;
 
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+
+    public DateTime? Desde { get; set; }
+
+    public DateTime? Hasta { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        ListaCobros = await CobroService.Listar(p => p.CobroId > 0);
+        ListaCobros = await cobroService.Listar(c => c.CobroId > 0);
+        Desde = null;
+        Hasta = null;
     }
 
-    public async Task Buscar()
+    private async Task Buscar()
     {
-        if (valorFiltro.Trim() != "")
+        if (Filtro == "Fecha")
+            ListaCobros = await cobroService
+            .Listar(f => f.Fecha >= Desde && f.Fecha <= Hasta);
+
+        else if (ValorFiltro.Trim() != "" && Filtro == "Deudor")
         {
-
-            if (Filtro == "Deudor")
-            {
-                ListaCobros = await CobroService.Listar(p => p.Deudor.Nombres.ToLower().Contains(valorFiltro.ToLower()));
-            }
+            ListaCobros = await cobroService
+            .Listar(p => p.Deudor.Nombres.ToLower()
+            .Contains(ValorFiltro.ToLower()));
         }
-        else
-            ListaCobros = await CobroService.Listar(p => p.CobroId > 0);
-
     }
     private async Task Restablecer()
     {
-        ListaCobros = await CobroService.Listar(p => p.CobroId > 0);
+        ListaCobros = await cobroService.Listar(e => e.CobroId > 0);
         Filtro = string.Empty;
-        valorFiltro = string.Empty;
+        ValorFiltro = string.Empty;
+        Desde = null;
+        Hasta = null;
     }
 }
